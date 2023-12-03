@@ -4,7 +4,7 @@ namespace AdventOfCode.Y2023;
 
 class Day01 {
     private IEnumerable<int> ParseInputPart1() {
-        var inputLines = File.ReadAllLines("Puzzles/Day01/input.txt");
+        var inputLines = File.ReadAllLines("Y2023/Day01/input.txt");
         var rxLeft = new Regex(@"^\D*(\d)");
         var rxRight = new Regex(@"(\d)\D*$");
         return inputLines

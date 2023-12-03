@@ -1,6 +1,6 @@
 namespace AdventOfCode.Y2023;
 
-class Day03 {
+class Day00 {
     private string[]? parsedInput;
 
     private string[] ParsedInput() {
@@ -8,7 +8,7 @@ class Day03 {
             return parsedInput!;
         }
 
-        parsedInput = File.ReadAllLines("Puzzles/Day03/input.txt");
+        parsedInput = File.ReadAllLines("Y2023/Day00/input.txt");
 
         return parsedInput;
     }

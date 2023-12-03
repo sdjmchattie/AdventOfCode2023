@@ -57,7 +57,7 @@ class Day02 {
             return parsedInput!;
         }
 
-        var inputLines = File.ReadAllLines("Puzzles/Day02/input.txt");
+        var inputLines = File.ReadAllLines("Y2023/Day02/input.txt");
         parsedInput = inputLines.Select(ParseGame).ToList();
 
         return parsedInput;
