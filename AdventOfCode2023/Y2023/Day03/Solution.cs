@@ -1,21 +1,22 @@
 namespace AdventOfCode.Y2023;
 
 class Day03 {
-    private string[]? parsedInput;
+    private EngineSchematic? parsedInput;
 
-    private string[] ParsedInput() {
+    private EngineSchematic ParsedInput() {
         if (parsedInput != null) {
             return parsedInput!;
         }
 
-        parsedInput = File.ReadAllLines("Y2023/Day03/input.txt");
+        var inputFile = File.ReadAllLines("Y2023/Day03/input.txt");
+        parsedInput = new EngineSchematic(inputFile);
 
         return parsedInput;
     }
 
     public object Part1()
     {
-        var input = ParsedInput();
+        var schematic = ParsedInput();
         return "Part 1 Solution";
     }
 
