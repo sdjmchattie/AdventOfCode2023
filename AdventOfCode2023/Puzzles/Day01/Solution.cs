@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
 using Microsoft.VisualBasic;
 
 namespace AdventOfCode.Y2023;
