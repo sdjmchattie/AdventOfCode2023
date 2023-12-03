@@ -79,6 +79,16 @@ class Day02 {
     public object Part2()
     {
         var games = ParsedInput();
-        return "Part 2 Solution";
+
+        var sumOfPowerOfMinimumCubesPerGame = games
+            .Select(game => {
+                var red = game.cubeSets.Max(cs => cs.red);
+                var green = game.cubeSets.Max(cs => cs.green);
+                var blue = game.cubeSets.Max(cs => cs.blue);
+                return red * green * blue;
+            })
+            .Sum();
+
+        return sumOfPowerOfMinimumCubesPerGame;
     }
 }
