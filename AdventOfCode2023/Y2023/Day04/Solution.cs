@@ -2,10 +2,18 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Y2023;
 
-readonly struct Card {
-    public readonly int Id { get; init; }
-    public IEnumerable<int> WinningNumbers { get; init; }
-    public IEnumerable<int> PlayedNumbers { get; init; }
+class Card {
+    public int Copies { get; set; }
+    public int Id { get; init; }
+    public IEnumerable<int> WinningNumbers { get; init; } = new List<int>();
+    public IEnumerable<int> PlayedNumbers { get; init; } = new List<int>();
+    public int WinCount
+    {
+        get {
+            var self = this;
+            return PlayedNumbers.Count(pn => self.WinningNumbers.Contains(pn));
+        }
+    }
 }
 
 class Day04 {
@@ -27,6 +35,7 @@ class Day04 {
         var playedNumbers = pnResults.Select(r => r.ToString()).Select(int.Parse);
 
         return new Card() {
+            Copies = 1,
             Id = id,
             WinningNumbers = winningNumbers,
             PlayedNumbers = playedNumbers
@@ -48,9 +57,7 @@ class Day04 {
     {
         var cards = ParsedInput();
         var cardValues = cards.Select(card => {
-            var winCount = card.PlayedNumbers.Count(pn => card.WinningNumbers.Any(wn => wn == pn));
-
-            return winCount == 0 ? 0 : Math.Pow(2, winCount - 1);
+            return card.WinCount == 0 ? 0 : Math.Pow(2, card.WinCount - 1);
         });
 
         return cardValues.Sum();
@@ -58,7 +65,18 @@ class Day04 {
 
     public object Part2()
     {
-        var input = ParsedInput();
-        return "Part 2 Solution";
+        var cards = ParsedInput().ToList();
+
+        for (int idx = 0; idx < cards.Count; idx++) {
+            var card = cards[idx];
+            for (int j = 0; j < card.WinCount; j++) {
+                var latterIndex = idx + j + 1;
+                if (latterIndex < cards.Count) {
+                    cards[latterIndex].Copies += card.Copies;
+                }
+            }
+        }
+
+        return cards.Select(card => card.Copies).Sum();
     }
 }
