@@ -13,14 +13,14 @@ class EngineSchematic(string[] input) : Grid2D(input) {
 
     private IEnumerable<SchematicNumber> GetSchematicNumbers()
     {
-        for (int y = 0; y < this.Width; y++) {
+        for (int y = 0; y < Height; y++) {
             bool prevIsDigit = false;
             string curNumber = "";
             int curMinX = 0;
 
-            for (int x = 0; x < this.Width; x++) {
+            for (int x = 0; x < Width; x++) {
                 var curChar = this[x, y];
-                if (!IsDigit(curChar) || x == this.Width - 1) {
+                if (!IsDigit(curChar) || x == Width - 1) {
                     if (IsDigit(curChar)) { curNumber += curChar; }
                     if (prevIsDigit) {
                         yield return new SchematicNumber {
@@ -44,11 +44,10 @@ class EngineSchematic(string[] input) : Grid2D(input) {
         }
     }
 
-    public IEnumerable<int> PartNumbers
+    private IEnumerable<SchematicNumber> Parts
     {
-        get
-        {
-            var partNumbers = this.GetSchematicNumbers().Where(schematicNumber => {
+        get {
+            return GetSchematicNumbers().Where(schematicNumber => {
                 var allNeighbours = new List<char>();
                 for (int x = schematicNumber.MinX; x <= schematicNumber.MaxX; x++) {
                     allNeighbours.AddRange(this.Neighbours(x, schematicNumber.Y));
@@ -56,8 +55,32 @@ class EngineSchematic(string[] input) : Grid2D(input) {
 
                 return allNeighbours.Any(neighbour => !IsDigit(neighbour) && neighbour != '.');
             });
+        }
+    }
 
-            return partNumbers.Select(partNumbers => partNumbers.Number);
+    public IEnumerable<int> PartNumbers
+    {
+        get { return Parts.Select(partNumbers => partNumbers.Number); }
+    }
+
+    public IEnumerable<int> GearRatios
+    {
+        get {
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    if (this[x, y] == '*') {
+                        var adjacentParts = this.Parts.Where(part => {
+                            var aboveOrBelow = part.Y == y - 1 || part.Y == y + 1;
+                            var sameLine = part.Y == y;
+                            return (sameLine && (part.MinX == x + 1 || part.MaxX == x - 1))
+                                || (aboveOrBelow && part.MinX <= x + 1 && part.MaxX >= x - 1);
+                        });
+                        if (adjacentParts.Count() == 2) {
+                            yield return adjacentParts.First().Number * adjacentParts.Last().Number;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -23,6 +23,6 @@ class Day03 {
     public object Part2()
     {
         var schematic = ParsedInput();
-        return "Part 2 Solution";
+        return schematic.GearRatios.Sum();
     }
 }
