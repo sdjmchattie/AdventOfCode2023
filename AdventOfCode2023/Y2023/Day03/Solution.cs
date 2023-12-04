@@ -17,12 +17,12 @@ class Day03 {
     public object Part1()
     {
         var schematic = ParsedInput();
-        return "Part 1 Solution";
+        return schematic.PartNumbers.Sum();
     }
 
     public object Part2()
     {
-        var input = ParsedInput();
+        var schematic = ParsedInput();
         return "Part 2 Solution";
     }
 }
