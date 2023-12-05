@@ -5,7 +5,6 @@ namespace AdventOfCode.Y2023;
 
 class Day05 {
     private string[]? fileContents;
-    private IImmutableList<long>? seeds;
     private IImmutableDictionary<string, IEnumerable<Mapping>>? mappings;
 
     private string[] FileContents()
@@ -15,16 +14,27 @@ class Day05 {
         return fileContents;
     }
 
-    private IImmutableList<long> Seeds()
+    private ImmutableList<long> LiteralSeeds()
     {
-        if (seeds == null) {
-            seeds = FileContents()[0]
-                .Split(" ")[1..]
-                .Select(long.Parse)
-                .ToImmutableList();
+        return FileContents()[0]
+            .Split(" ")[1..]
+            .Select(long.Parse)
+            .ToImmutableList();
+    }
+
+    private ImmutableList<long> RangedSeeds()
+    {
+        var firstTwo = FileContents()[0]
+            .Split(" ")[1..3]
+            .Select(long.Parse)
+            .ToArray();
+
+        var seeds = new List<long>();
+        for (long i = 0; i < firstTwo[1]; i++) {
+            seeds.Add(firstTwo[0] + i);
         }
 
-        return seeds;
+        return seeds.ToImmutableList();
     }
 
     private IImmutableDictionary<string, IEnumerable<Mapping>> Mappings()
@@ -59,14 +69,15 @@ class Day05 {
 
     public object Part1()
     {
-        var almanac = new Almanac(Seeds(), Mappings());
+        var almanac = new Almanac(LiteralSeeds(), Mappings());
         var seedsToDestinations = almanac.DetermineLocations();
         return seedsToDestinations.MinBy(std => std.location).location;
     }
 
     public object Part2()
     {
-        // var input = ParsedInput();
-        return "Part 2 Solution";
+        var almanac = new Almanac(RangedSeeds(), Mappings());
+        var seedsToDestinations = almanac.DetermineLocations();
+        return seedsToDestinations.MinBy(std => std.location).location;
     }
 }
