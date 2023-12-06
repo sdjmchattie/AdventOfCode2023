@@ -13,7 +13,7 @@ class Day06 {
         return fileContents;
     }
 
-    private IEnumerable<Boat> Boats
+    private IEnumerable<Boat> MultipleBoats
     {
         get {
             var times = FileContents()[0].Split(" ").Where(e => e != string.Empty).Skip(1).Select(int.Parse);
@@ -23,15 +23,25 @@ class Day06 {
         }
     }
 
+    private Boat OneBoat
+    {
+        get {
+            var time = string.Join("", FileContents()[0].Split(" ").Where(e => e != string.Empty).Skip(1));
+            var distance = string.Join("", FileContents()[1].Split(" ").Where(e => e != string.Empty).Skip(1));
+
+            return new Boat() {Time = long.Parse(time), Distance = long.Parse(distance)};
+        }
+    }
+
     public object Part1()
     {
-        var boats = Boats;
-        return boats.Aggregate(1, (acc, boat) => acc * boat.WinCount());
+        var boats = MultipleBoats;
+        return boats.Aggregate(1L, (acc, boat) => acc * boat.WinCount());
     }
 
     public object Part2()
     {
-        var boats = Boats;
-        return "Part 2 Solution";
+        var boat = OneBoat;
+        return boat.WinCount();
     }
 }

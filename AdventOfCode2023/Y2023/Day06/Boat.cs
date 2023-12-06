@@ -3,9 +3,16 @@ using System.Dynamic;
 namespace AdventOfCode.Utils.Y2023.Day06;
 
 class Boat {
-    public int Time { get; init; }
-    public int Distance { get; init; }
+    public long Time { get; init; }
+    public long Distance { get; init; }
 
-    public int WinCount() =>
-        Enumerable.Range(0, Time).Count(t => (Time - t) * t > Distance);
+    public long WinCount()
+    {
+        var winCount = 0;
+        for (long t = 0; t < Time; t++) {
+            winCount += (Time - t) * t > Distance ? 1 : 0;
+        }
+
+        return winCount;
+    }
 }
