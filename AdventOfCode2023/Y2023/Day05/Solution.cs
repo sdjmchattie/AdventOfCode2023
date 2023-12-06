@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Data;
+using AdventOfCode.Utils.Y2023.Day05;
 
 namespace AdventOfCode.Y2023;
 
@@ -14,24 +15,24 @@ class Day05 {
         return fileContents;
     }
 
-    private ImmutableList<long> LiteralSeeds()
+    private ImmutableList<Resource> LiteralSeeds()
     {
         return FileContents()[0]
             .Split(" ")[1..]
-            .Select(long.Parse)
+            .Select(num => Resource.ByEndpoints(long.Parse(num), long.Parse(num)))
             .ToImmutableList();
     }
 
-    private ImmutableList<long> RangedSeeds()
+    private ImmutableList<Resource> RangedSeeds()
     {
-        var firstTwo = FileContents()[0]
-            .Split(" ")[1..3]
+        var seedValues = FileContents()[0]
+            .Split(" ")[1..]
             .Select(long.Parse)
             .ToArray();
 
-        var seeds = new List<long>();
-        for (long i = 0; i < firstTwo[1]; i++) {
-            seeds.Add(firstTwo[0] + i);
+        var seeds = new List<Resource>();
+        for (int i = 0; i < seedValues.Length; i += 2) {
+            seeds.Add(Resource.ByRangeLength(seedValues[i], seedValues[i+1]));
         }
 
         return seeds.ToImmutableList();
@@ -71,13 +72,13 @@ class Day05 {
     {
         var almanac = new Almanac(LiteralSeeds(), Mappings());
         var seedsToDestinations = almanac.DetermineLocations();
-        return seedsToDestinations.MinBy(std => std.location).location;
+        return seedsToDestinations.Select(res => res.idStart).Min();
     }
 
     public object Part2()
     {
         var almanac = new Almanac(RangedSeeds(), Mappings());
         var seedsToDestinations = almanac.DetermineLocations();
-        return seedsToDestinations.MinBy(std => std.location).location;
+        return seedsToDestinations.Select(res => res.idStart).Min();
     }
 }

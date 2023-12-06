@@ -1,4 +1,4 @@
-namespace AdventOfCode.Y2023;
+namespace AdventOfCode.Utils.Y2023.Day05;
 
 class Mapping(long destinationStart, long sourceStart, long rangeLength)
 {
@@ -6,6 +6,6 @@ class Mapping(long destinationStart, long sourceStart, long rangeLength)
     public readonly long sourceEnd = sourceStart + rangeLength - 1;
     public readonly long offset = destinationStart - sourceStart;
 
-    public bool ContainsSource(long source) => source >= sourceStart && source <= sourceEnd;
+    public bool CoversResource(Resource resource) => resource.idStart <= sourceEnd && resource.idEnd >= sourceStart;
     public long MapToDestination(long source) => source + offset;
 }
