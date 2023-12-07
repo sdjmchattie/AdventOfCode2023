@@ -1,5 +1,3 @@
-using System.Dynamic;
-
 namespace AdventOfCode.Utils.Y2023.Day06;
 
 class Boat {

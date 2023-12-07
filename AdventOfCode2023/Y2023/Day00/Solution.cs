@@ -1,24 +1,24 @@
 namespace AdventOfCode.Y2023;
 
 class Day00 {
-    private string[]? parsedInput;
+    private string[]? fileContents;
 
-    private string[] ParsedInput()
+    private string[] FileContents()
     {
-        parsedInput ??= File.ReadAllLines("Y2023/Day00/input.txt");
+        fileContents ??= File.ReadAllLines("Y2023/Day00/input.txt");
 
-        return parsedInput;
+        return fileContents;
     }
 
     public object Part1()
     {
-        var input = ParsedInput();
+        var input = FileContents();
         return "Part 1 Solution";
     }
 
     public object Part2()
     {
-        var input = ParsedInput();
+        var input = FileContents();
         return "Part 2 Solution";
     }
 }
