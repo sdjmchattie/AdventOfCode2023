@@ -1,3 +1,4 @@
+using AdventOfCode.Utils;
 using AdventOfCode.Utils.Y2023.Day08;
 
 namespace AdventOfCode.Y2023;
@@ -39,7 +40,40 @@ class Day08 {
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        var directions = Directions;
+        var network = Network;
+        var startingNodes = network
+            .Where(entry => entry.Key.EndsWith('A'))
+            .Select(entry => entry.Value);
+
+        var loopLengths = startingNodes.Select(node => {
+            // Find first instance of end node
+            var firstSteps = 0;
+            while (!node.Name.EndsWith('Z')) {
+                node = network[node.NodeNameInDirection(directions.Current)];
+                directions.MoveNext();
+                firstSteps++;
+            }
+
+            // Count distance back to the same end node
+            var secondSteps = 1;
+            node = network[node.NodeNameInDirection(directions.Current)];
+            directions.MoveNext();
+
+            while (!node.Name.EndsWith('Z')) {
+                node = network[node.NodeNameInDirection(directions.Current)];
+                directions.MoveNext();
+                secondSteps++;
+            }
+
+            // Quick assertion that the loop length is the same as the initial xxA to xxZ tail!
+            if (firstSteps != secondSteps) {
+                throw new InvalidDataException("This implementation assumes the lead in (tail) and the loop length will be identical!");
+            }
+
+            return firstSteps;
+        }).Select(steps => (long)steps);
+
+        return StolenMathsFunctions.LCM(loopLengths);
     }
 }
