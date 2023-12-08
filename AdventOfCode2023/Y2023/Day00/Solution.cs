@@ -2,7 +2,8 @@ namespace AdventOfCode.Y2023;
 
 class Day00 {
     private string[]? inputContents;
-    private string[] InputContents => inputContents ??= File.ReadAllLines($"Y2023/{this.GetType().Name}/input.txt");
+    private string[] InputContents => inputContents ??=
+        File.ReadAllLines($"Y2023/{this.GetType().Name}/input.txt");
 
     public object Part1()
     {
