@@ -12,12 +12,11 @@ class Day09 {
 
     public object Part1()
     {
-        return Extrapolations.Select(ext => ext.Extrapolate()).Sum();
+        return Extrapolations.Select(ext => ext.Extrapolate(left: false)).Sum();
     }
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        return Extrapolations.Select(ext => ext.Extrapolate(left: true)).Sum();
     }
 }

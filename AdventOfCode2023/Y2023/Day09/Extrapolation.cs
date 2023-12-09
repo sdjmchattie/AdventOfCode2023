@@ -4,7 +4,7 @@ class Extrapolation(IEnumerable<int> sequence)
 {
     public readonly IEnumerable<int> Sequence = sequence;
 
-    public int Extrapolate() {
+    public int Extrapolate(bool left) {
         var sequenceList = Sequence.ToList();
         var adjacentValues = sequenceList[..^1].Zip(sequenceList[1..]);
         var diffs = adjacentValues.Select(vals => vals.Second - vals.First);
@@ -12,9 +12,9 @@ class Extrapolation(IEnumerable<int> sequence)
 
         if (!diffs.All(d => d == 0)) {
             var nextExtrapolation = new Extrapolation(diffs);
-            newDiff = nextExtrapolation.Extrapolate();
+            newDiff = nextExtrapolation.Extrapolate(left);
         }
 
-        return sequenceList[^1] + newDiff;
+        return left ? sequenceList[0] - newDiff : sequenceList[^1] + newDiff;
     }
 }
