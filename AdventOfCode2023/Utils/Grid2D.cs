@@ -9,7 +9,7 @@ readonly struct Point(int x, int y) {
     public readonly int X = x;
     public readonly int Y = y;
 
-    public Point Offset(Offset offset) => new(offset.X + X, offset.Y + Y);
+    public Point OffsetBy(Offset offset) => new(offset.X + X, offset.Y + Y);
 }
 
 static class GridCompassExtensions {
@@ -41,16 +41,16 @@ class Grid2D(string[] input)
 
     public char this[int x, int y] => grid[y][x];
     public char this[Point point] => this[point.X, point.Y];
+    public IEnumerable<char> this[IEnumerable<Point> points] =>
+        points.Select(point => this[point]);
 
-    public Point? Find(char needle)
+    public IEnumerable<Point> Find(char needle)
     {
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
-                if (this[x, y] == needle) { return new Point(x, y); }
+                if (this[x, y] == needle) { yield return new Point(x, y); }
             }
         }
-
-        return null;
     }
 
     public IEnumerable<char> Neighbours(Point point)
@@ -70,16 +70,24 @@ class Grid2D(string[] input)
 
     public char? Neighbour(Point point, CompassDirection direction)
     {
-        var offset = direction.GetOffset();
-        var outPoint = point.Offset(offset);
-
-        if (
-            outPoint.X < 0 || outPoint.X >= Width ||
-            outPoint.Y < 0 || outPoint.Y >= Height
-        ) {
-            return null;
-        }
-
-        return this[outPoint];
+        var outPoint = point.OffsetBy(direction.GetOffset());
+        return PointOutOfBounds(outPoint) ? null : this[outPoint];
     }
+
+    public IEnumerable<Point> PointsTowards(Point point, CompassDirection direction)
+    {
+        var newPoint = point;
+        var offset = direction.GetOffset();
+        while (true) {
+            newPoint = newPoint.OffsetBy(offset);
+            if (PointOutOfBounds(newPoint)) {
+                yield break;
+            }
+
+            yield return newPoint;
+        }
+    }
+
+    private bool PointOutOfBounds(Point point) =>
+        point.X < 0 || point.X >= Width || point.Y < 0 || point.Y >= Height;
 }

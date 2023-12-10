@@ -6,35 +6,42 @@ static class PipeExtensions {
     }
 }
 
-class PipeMap(string[] input) : Grid2D(input) {
+class PipeMap : Grid2D {
+    private readonly Point startPoint;
+    private readonly char startChar;
     private IList<Point>? pipePoints;
+
+    public PipeMap(string[] input) : base(input)
+    {
+        startPoint = Find('S').First();
+        var startDirs = new List<CompassDirection> {
+                CompassDirection.North, CompassDirection.East,
+                CompassDirection.South, CompassDirection.West,
+            }
+            .Select(dir => (Direction: dir, Pipe: Neighbour(startPoint, dir)))
+            .Where(dirPipe => dirPipe.Pipe != null)
+            .Where(dirPipe => NextDir(dirPipe.Pipe ?? '.', dirPipe.Direction.Opposite()) != null)
+            .Select(dirPipe => dirPipe.Direction);
+        startChar = ConnectedDirections.Keys
+            .Where(key => startDirs.All(d => ConnectedDirections[key].Contains(d)))
+            .First();
+    }
 
     private IList<Point> PipePoints
     {
         get {
             if (pipePoints == null) {
-                pipePoints = new List<Point>();
-                var startPoint = Find('S');
-                if (startPoint != null) {
-                    pipePoints.Add(startPoint.Value);
-                    CompassDirection? nextDirection = new List<CompassDirection> {
-                            CompassDirection.North, CompassDirection.East,
-                            CompassDirection.South, CompassDirection.West,
-                        }
-                        .Select(dir => (Direction: dir, Pipe: Neighbour(startPoint.Value, dir)))
-                        .Where(dirPipe => dirPipe.Pipe != null)
-                        .Where(dirPipe => NextDir(dirPipe.Pipe.Value, dirPipe.Direction.Opposite()) != null)
-                        .Select(dirPipe => dirPipe.Direction)
-                        .First();
-
-                    var nextPoint = startPoint.Value.Offset(nextDirection.Value.GetOffset());
-                    var nextPipe = this[nextPoint];
-                    while (nextPipe != 'S') {
-                        pipePoints.Add(nextPoint);
-                        nextDirection = NextDir(nextPipe, nextDirection.Value.Opposite());
-                        nextPoint = nextPoint.Offset(nextDirection.Value.GetOffset());
-                        nextPipe = this[nextPoint];
-                    }
+                pipePoints = new List<Point> { startPoint };
+                CompassDirection? possDirection = ConnectedDirections[startChar].First();
+                var nextDirection = possDirection ?? CompassDirection.North;
+                var nextPoint = startPoint.OffsetBy(nextDirection.GetOffset());
+                var nextPipe = this[nextPoint];
+                while (nextPipe != 'S') {
+                    pipePoints.Add(nextPoint);
+                    possDirection = NextDir(nextPipe, nextDirection.Opposite());
+                    nextDirection = possDirection ?? CompassDirection.North;
+                    nextPoint = nextPoint.OffsetBy(nextDirection.GetOffset());
+                    nextPipe = this[nextPoint];
                 }
             }
 
@@ -52,6 +59,40 @@ class PipeMap(string[] input) : Grid2D(input) {
             {'F', [CompassDirection.East, CompassDirection.South]},
         };
 
+    public int Length => PipePoints.Count;
+
+    public int InnerGroundCount {
+        get {
+            var groundPoints = new List<Point>();
+            for (int x = 0; x < Width; x++) {
+                for (int y = 0; y < Height; y++) {
+                    var point = new Point(x, y);
+                    if (!PipePoints.Contains(point)) {
+                        groundPoints.Add(point);
+                    }
+                }
+            }
+
+            return groundPoints
+                .Select(ground => PointsTowards(ground, CompassDirection.East))
+                .Select(mapPoints => PipePoints.Intersect(mapPoints))
+                .Select(pipePoints => pipePoints.OrderBy(point => point.X))
+                .Select(pipePoints => this[pipePoints])
+                .Count(pipeChars => {
+                    var actualChars = pipeChars.Select(c => c == 'S' ? startChar : c);
+                    var verticalCount = actualChars.Count(c => c == '|');
+                    var angles = actualChars.Where(c => c == 'L' || c == 'F' || c == '7' || c == 'J').ToList();
+                    var angleCount = 0;
+                    for (int i = 0; i < angles.Count; i += 2) {
+                        var angleString = $"{angles[i]}{angles[i + 1]}";
+                        if (angleString == "L7" || angleString == "FJ") { angleCount++; }
+                    }
+
+                    return (verticalCount + angleCount) % 2 == 1;
+                });
+        }
+    }
+
     private static CompassDirection? NextDir(char piece, CompassDirection excluding)
     {
         var connectedDirections = ConnectedDirections[piece];
@@ -59,9 +100,6 @@ class PipeMap(string[] input) : Grid2D(input) {
             return null;
         }
 
-        Console.WriteLine($"Excluding: {excluding}");
         return ConnectedDirections[piece].First(dir => dir != excluding);
     }
-
-    public int Length => PipePoints.Count;
 }

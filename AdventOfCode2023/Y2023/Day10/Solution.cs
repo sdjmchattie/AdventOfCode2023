@@ -16,7 +16,6 @@ class Day10 {
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        return PipeMap.InnerGroundCount;
     }
 }
