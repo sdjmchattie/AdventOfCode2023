@@ -11,12 +11,11 @@ class Day11 {
 
     public object Part1()
     {
-        return Universe.DistanceBetweenGalaxies.Sum();
+        return Universe.DistanceBetweenGalaxies(1).Sum();
     }
 
     public object Part2()
     {
-        var universe = Universe;
-        return "Part 2 Solution";
+        return Universe.DistanceBetweenGalaxies(999999).Sum();
     }
 }

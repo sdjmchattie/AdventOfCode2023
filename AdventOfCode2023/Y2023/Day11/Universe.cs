@@ -25,25 +25,23 @@ class Universe(string[] input) : Grid2D(input) {
         }
     }
 
-    public IEnumerable<int> DistanceBetweenGalaxies
+    public IEnumerable<long> DistanceBetweenGalaxies(int expansion)
     {
-        get {
-            var expandingRows = ExpandingRows.ToList();
-            var expandingColumns = ExpandingColumns.ToList();
-            var galaxyPoints = Find('#').ToList();
-            for (int i = 0; i < galaxyPoints.Count; i++) {
-                for (int j = i; j < galaxyPoints.Count; j++) {
-                    if (i == j) { continue; }
-                    var first = galaxyPoints[i];
-                    var second = galaxyPoints[j];
-                    var minX = Math.Min(first.X, second.X);
-                    var maxX = Math.Max(first.X, second.X);
-                    var minY = Math.Min(first.Y, second.Y);
-                    var maxY = Math.Max(first.Y, second.Y);
-                    var doubleColumns = expandingColumns.Where(col => col > minX && col < maxX);
-                    var doubleRows = expandingRows.Where(row => row > minY && row < maxY);
-                    yield return maxX - minX + doubleColumns.Count() + maxY - minY + doubleRows.Count();
-                }
+        var expandingRows = ExpandingRows.ToList();
+        var expandingColumns = ExpandingColumns.ToList();
+        var galaxyPoints = Find('#').ToList();
+        for (int i = 0; i < galaxyPoints.Count; i++) {
+            for (int j = i; j < galaxyPoints.Count; j++) {
+                if (i == j) { continue; }
+                var first = galaxyPoints[i];
+                var second = galaxyPoints[j];
+                var minX = Math.Min(first.X, second.X);
+                var maxX = Math.Max(first.X, second.X);
+                var minY = Math.Min(first.Y, second.Y);
+                var maxY = Math.Max(first.Y, second.Y);
+                var expandedColumns = expandingColumns.Where(col => col > minX && col < maxX);
+                var expandedRows = expandingRows.Where(row => row > minY && row < maxY);
+                yield return maxX - minX + maxY - minY + (expandedColumns.Count() + expandedRows.Count()) * expansion;
             }
         }
     }
