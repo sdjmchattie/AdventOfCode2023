@@ -88,6 +88,22 @@ class Grid2D(string[] input)
         }
     }
 
+    public IEnumerable<Point> PointsAlong(int index, int axis)
+    {
+        if (axis != 0 && axis != 1) {
+            throw new ArgumentOutOfRangeException(nameof(axis), "Axis should be 0 or 1 for horizontal or vertical respectively.");
+        }
+
+        var direction = axis == 0 ? CompassDirection.East : CompassDirection.South;
+        var startPoint = axis == 0 ? new Point(0, index) : new Point(index, 0);
+
+        if (PointOutOfBounds(startPoint)) {
+            throw new ArgumentOutOfRangeException(nameof(index), "Index must be within the bounds of the grid.");
+        }
+
+        return new List<Point>() {startPoint}.Concat(PointsTowards(startPoint, direction));
+    }
+
     private bool PointOutOfBounds(Point point) =>
         point.X < 0 || point.X >= Width || point.Y < 0 || point.Y >= Height;
 }
