@@ -1,4 +1,4 @@
-
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Utils.Y2023.Day12;
@@ -8,15 +8,15 @@ class SpringReport(string report, int[] summary) {
     private Regex ValidPattern
     {
         get {
-            var pattern = @"^\.*";
+            var pattern = new StringBuilder(@"^\.*");
 
             foreach (var brokenCount in summary[..^1]) {
-                pattern += @"#{" + brokenCount + @"}\.+";
+                pattern.Append(@"#{").Append(brokenCount).Append(@"}\.+");
             }
 
-            pattern += @"#{" + summary[^1] + @"}\.*$";
+            pattern.Append(@"#{").Append(summary[^1]).Append(@"}\.*$");
 
-            return new(pattern);
+            return new(pattern.ToString());
         }
     }
 
