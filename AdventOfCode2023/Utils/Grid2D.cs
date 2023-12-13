@@ -39,8 +39,18 @@ class Grid2D(string[] input)
     public int Width => grid[0].Count;
     public int Height => grid.Count;
 
-    public char this[int x, int y] => grid[y][x];
-    public char this[Point point] => this[point.X, point.Y];
+    public char this[int x, int y]
+    {
+        get { return grid[y][x]; }
+        protected set { grid[y][x] = value; }
+    }
+
+    public char this[Point point]
+    {
+        get { return this[point.X, point.Y]; }
+        protected set { this[point.X, point.Y] = value; }
+    }
+
     public IEnumerable<char> this[IEnumerable<Point> points] =>
         points.Select(point => this[point]);
 

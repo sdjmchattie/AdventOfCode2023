@@ -1,4 +1,5 @@
-using AdventOfCode.Utils.Y2023.Day11;
+using AdventOfCode.Utils;
+using AdventOfCode.Utils.Y2023.Day13;
 
 namespace AdventOfCode.Y2023;
 
@@ -28,22 +29,29 @@ class Day13 {
     private List<Pattern> Patterns =>
         PatternBlocks.Select(block => new Pattern(block)).ToList();
 
+    private int SumMirrors(int variations)
+    {
+        var mirrors = Patterns
+            .Select(pattern => pattern.FindMirrors(variations));
+        var colSum = mirrors
+            .Where(mirror => mirror.First().axis == Axis.Vertical)
+            .Select(mirror => mirror.First().index)
+            .Sum();
+        var rowSum = mirrors
+            .Where(mirror => mirror.First().axis == Axis.Horizontal)
+            .Select(mirror => mirror.First().index)
+            .Sum();
+
+        return colSum + rowSum * 100;
+    }
+
     public object Part1()
     {
-        var mirrorColumnSum = Patterns
-            .Select(pattern => pattern.MirrorColumn ?? 0)
-            .Sum();
-
-        var mirrorRowSum = Patterns
-            .Select(pattern => pattern.MirrorRow ?? 0)
-            .Sum();
-
-        return mirrorColumnSum + mirrorRowSum * 100;
+        return SumMirrors(0);
     }
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        return SumMirrors(1);
     }
 }
