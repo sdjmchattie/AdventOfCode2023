@@ -31,14 +31,10 @@ class Platform : Grid2D {
     }
 
     public void Tilt(CompassDirection direction) {
-        var axis = direction == CompassDirection.North ||
-            direction == CompassDirection.South ?
-            Axis.Vertical : Axis.Horizontal;
-        var maxDimension = axis == Axis.Vertical ? Width : Height;
+        var maxDimension = PointsAlong(0, direction.Opposite()).Count();
 
         for (int i = 0; i < maxDimension; i++) {
             var points = PointsAlong(i, direction.Opposite()).ToList();
-
             var newStrip = Condense(this[points]).ToList();
 
             for (int j = 0; j < newStrip.Count; j++) {
