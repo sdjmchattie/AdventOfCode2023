@@ -100,14 +100,16 @@ class Grid2D(string[] input)
 
     public IEnumerable<Point> PointsAlong(int index, Axis axis)
     {
-        var direction = axis == Axis.Horizontal ? CompassDirection.East : CompassDirection.South;
-        var startPoint = axis == Axis.Horizontal ? new Point(0, index) : new Point(index, 0);
+        var testPoint = axis == Axis.Horizontal ? new Point(0, index) : new Point(index, 0);
 
-        if (PointOutOfBounds(startPoint)) {
+        if (PointOutOfBounds(testPoint)) {
             throw new ArgumentOutOfRangeException(nameof(index), "Index must be within the bounds of the grid.");
         }
 
-        return new List<Point>() {startPoint}.Concat(PointsTowards(startPoint, direction));
+        var direction = axis == Axis.Horizontal ? CompassDirection.East : CompassDirection.South;
+        var startPoint = axis == Axis.Horizontal ? new Point(-1, index) : new Point(index, -1);
+
+        return PointsTowards(startPoint, direction);
     }
 
     private bool PointOutOfBounds(Point point) =>
