@@ -31,10 +31,19 @@ static class GridCompassExtensions {
     }
 }
 
-class Grid2D(string[] input)
+class Grid2D : IEquatable<Grid2D>
 {
-    private readonly List<List<char>> grid =
+    private readonly List<List<char>> grid;
+
+    public Grid2D(string[] input)
+    {
+        grid =
         input.Select(line => line.ToList()).ToList();
+    }
+
+    public Grid2D(Grid2D other) {
+        grid = other.grid.Select(row => row.Select(c => c).ToList()).ToList();
+    }
 
     public int Width => grid[0].Count;
     public int Height => grid.Count;
@@ -114,4 +123,19 @@ class Grid2D(string[] input)
 
     private bool PointOutOfBounds(Point point) =>
         point.X < 0 || point.X >= Width || point.Y < 0 || point.Y >= Height;
+
+    public bool Equals(Grid2D? other)
+    {
+        if (other == null || grid.Count() != other.grid.Count()) {
+            return false;
+        }
+
+        for (int i = 0; i < grid.Count; i++) {
+            if (!grid[i].SequenceEqual(other.grid[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
