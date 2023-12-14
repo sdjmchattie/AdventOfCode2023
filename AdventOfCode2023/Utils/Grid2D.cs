@@ -107,18 +107,27 @@ class Grid2D : IEquatable<Grid2D>
         }
     }
 
-    public IEnumerable<Point> PointsAlong(int index, Axis axis)
+    public IEnumerable<Point> PointsAlong(int index, CompassDirection direction)
     {
-        var testPoint = axis == Axis.Horizontal ? new Point(0, index) : new Point(index, 0);
-
-        if (PointOutOfBounds(testPoint)) {
+        var maxIndex = direction == CompassDirection.North ||
+            direction == CompassDirection.South ? Height : Width;
+        if (index < 0 || index >= maxIndex) {
             throw new ArgumentOutOfRangeException(nameof(index), "Index must be within the bounds of the grid.");
         }
 
-        var direction = axis == Axis.Horizontal ? CompassDirection.East : CompassDirection.South;
-        var startPoint = axis == Axis.Horizontal ? new Point(-1, index) : new Point(index, -1);
+        return PointsTowards(PointOutsideGrid(index, direction), direction);
+    }
 
-        return PointsTowards(startPoint, direction);
+    protected Point PointOutsideGrid(int index, CompassDirection direction)
+    {
+        return direction switch
+        {
+            CompassDirection.North => new Point(index, Height),
+            CompassDirection.South => new Point(index, -1),
+            CompassDirection.West => new Point(Width, index),
+            CompassDirection.East => new Point(-1, index),
+            _ => default,
+        };
     }
 
     private bool PointOutOfBounds(Point point) =>
@@ -126,7 +135,7 @@ class Grid2D : IEquatable<Grid2D>
 
     public bool Equals(Grid2D? other)
     {
-        if (other == null || grid.Count() != other.grid.Count()) {
+        if (other == null || grid.Count != other.grid.Count) {
             return false;
         }
 
