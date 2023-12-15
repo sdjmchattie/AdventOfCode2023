@@ -12,12 +12,13 @@ class Day15 {
     public object Part1()
     {
         var input = InputContents;
-        return Steps.Aggregate(0, (acc, step) => acc + new Hasher(step).Hash);
+        return Steps.Aggregate(0, (acc, step) => acc + LensArray.Hash(step));
     }
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        var lensArray = new LensArray();
+        lensArray.FollowSteps(Steps);
+        return lensArray.FocussingPower;
     }
 }
