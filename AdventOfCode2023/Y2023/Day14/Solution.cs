@@ -20,8 +20,6 @@ class Day14 {
     {
         var platformList = new List<Platform>();
         var platform = new Platform(InputContents);
-        var loopStart = 0;
-        var i = 0;
 
         while(true) {
             platform.Tilt(CompassDirection.North);
@@ -31,20 +29,14 @@ class Day14 {
 
             foreach (Platform p in platformList) {
                 if (platform.Equals(p)) {
-                    if (loopStart == 0) {
-                        loopStart = i;
-                    } else {
-                        var loopLength = i - loopStart;
-                        var neededPlatform = platformList[(1000000000 - loopStart - 1) % loopLength];
-                        return neededPlatform.GetNorthLoad();
-                    }
-
-                    platformList.Clear();
-                    break;
+                    var loopStart = platformList.FindIndex(p => p.Equals(platform));
+                    var loopLength = platformList.Count - loopStart;
+                    Console.WriteLine(loopStart);
+                    var neededPlatform = platformList[loopStart - 1 + (1000000000 - loopStart) % loopLength];
+                    return neededPlatform.GetNorthLoad();
                 }
             }
 
-            i++;
             platformList.Add(new Platform(platform));
         }
     }
