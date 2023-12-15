@@ -10,8 +10,8 @@ class Pattern(string[] input) : Grid2D(input) {
             var variationCountdown = variations;
 
             for (int offset = 0; offset <= maxOffset; offset++) {
-                var leftValues = this[PointsAlong(i - offset, Axis.Vertical)];
-                var rightValues = this[PointsAlong(j + offset, Axis.Vertical)];
+                var leftValues = this[PointsAlong(i - offset, CompassDirection.South)];
+                var rightValues = this[PointsAlong(j + offset, CompassDirection.South)];
                 variationCountdown -= leftValues.Zip(rightValues)
                     .Count(chars => chars.First != chars.Second);
             }
@@ -29,8 +29,8 @@ class Pattern(string[] input) : Grid2D(input) {
             var variationCountdown = variations;
 
             for (int offset = 0; offset <= maxOffset; offset++) {
-                var upperValues = this[PointsAlong(i - offset, Axis.Horizontal)];
-                var lowerValues = this[PointsAlong(j + offset, Axis.Horizontal)];
+                var upperValues = this[PointsAlong(i - offset, CompassDirection.East)];
+                var lowerValues = this[PointsAlong(j + offset, CompassDirection.East)];
                 variationCountdown -= upperValues.Zip(lowerValues)
                     .Count(chars => chars.First != chars.Second);
             }

@@ -11,7 +11,7 @@ class Day14 {
     public object Part1()
     {
         var platform = new Platform(InputContents);
-        platform.Tip(CompassDirection.North);
+        platform.Tilt(CompassDirection.North);
 
         return platform.GetNorthLoad();
     }
@@ -24,10 +24,10 @@ class Day14 {
         var i = 0;
 
         while(true) {
-            platform.Tip(CompassDirection.North);
-            platform.Tip(CompassDirection.West);
-            platform.Tip(CompassDirection.South);
-            platform.Tip(CompassDirection.East);
+            platform.Tilt(CompassDirection.North);
+            platform.Tilt(CompassDirection.West);
+            platform.Tilt(CompassDirection.South);
+            platform.Tilt(CompassDirection.East);
 
             foreach (Platform p in platformList) {
                 if (platform.Equals(p)) {

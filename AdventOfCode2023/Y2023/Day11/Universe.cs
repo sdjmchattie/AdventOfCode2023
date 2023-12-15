@@ -5,7 +5,7 @@ class Universe(string[] input) : Grid2D(input) {
     {
         get {
             for (int i = 0; i < Height; i++) {
-                var chars = this[PointsAlong(i, Axis.Horizontal)];
+                var chars = this[PointsAlong(i, CompassDirection.East)];
                 if (chars.All(c => c == '.')) {
                     yield return i;
                 }
@@ -17,7 +17,7 @@ class Universe(string[] input) : Grid2D(input) {
     {
         get {
             for (int i = 0; i < Width; i++) {
-                var chars = this[PointsAlong(i, Axis.Vertical)];
+                var chars = this[PointsAlong(i, CompassDirection.South)];
                 if (chars.All(c => c == '.')) {
                     yield return i;
                 }

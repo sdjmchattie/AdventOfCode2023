@@ -1,3 +1,5 @@
+using AdventOfCode.Utils.Y2023.Day08;
+
 namespace AdventOfCode.Utils.Y2023.Day14;
 
 class Platform : Grid2D {
@@ -28,34 +30,15 @@ class Platform : Grid2D {
         }
     }
 
-    public void Tip(CompassDirection direction) {
-        var axis = direction == CompassDirection.North ||
-            direction == CompassDirection.South ?
-            Axis.Vertical : Axis.Horizontal;
-        var flip = direction == CompassDirection.South ||
-            direction == CompassDirection.East;
-        var maxDimension = axis == Axis.Vertical ? Width : Height;
+    public void Tilt(CompassDirection direction) {
+        var maxDimension = PointsAlong(0, direction.Opposite()).Count();
 
         for (int i = 0; i < maxDimension; i++) {
-            var points = PointsAlong(i, axis);
-
-            if (flip) {
-                points = points.Reverse();
-            }
-
+            var points = PointsAlong(i, direction.Opposite()).ToList();
             var newStrip = Condense(this[points]).ToList();
 
             for (int j = 0; j < newStrip.Count; j++) {
-                var k = j;
-                if (flip) {
-                    k = maxDimension - j - 1;
-                }
-
-                if (axis == Axis.Horizontal) {
-                    this[k, i] = newStrip[j];
-                } else {
-                    this[i, k] = newStrip[j];
-                }
+                this[points[j]] = newStrip[j];
             }
         }
     }
@@ -64,7 +47,7 @@ class Platform : Grid2D {
     {
         var load = 0;
         for (int x = 0; x < Width; x++) {
-            var strip = this[PointsAlong(x, Axis.Vertical)];
+            var strip = this[PointsAlong(x, CompassDirection.South)];
             var loadValue = strip.Count();
 
             foreach (char c in strip) {
