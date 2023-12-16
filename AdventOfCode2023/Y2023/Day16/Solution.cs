@@ -20,7 +20,25 @@ class Day16 {
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        var maxEnergize = 0;
+        var simulator = BeamSimulator;
+
+        for (int x = 0; x < simulator.Width; x++) {
+            simulator.RunSimulation(new Point(x, -1), CompassDirection.South);
+            maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
+
+            simulator.RunSimulation(new Point(x, simulator.Height), CompassDirection.North);
+            maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
+        }
+
+        for (int y = 0; y < simulator.Height; y++) {
+            simulator.RunSimulation(new Point(-1, y), CompassDirection.East);
+            maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
+
+            simulator.RunSimulation(new Point(simulator.Width, y), CompassDirection.West);
+            maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
+        }
+
+        return maxEnergize;
     }
 }

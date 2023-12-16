@@ -8,6 +8,8 @@ class BeamSimulator {
     private readonly Grid2D Mirrors;
     private EnergyGrid Beams;
     public int EnergizedCount => Beams.Find('#').Count();
+    public int Width => Mirrors.Width;
+    public int Height => Mirrors.Height;
 
     public BeamSimulator(string[] mirrors)
     {
