@@ -1,5 +1,3 @@
-using System.Dynamic;
-
 namespace AdventOfCode.Utils.Y2023.Day16;
 
 class BeamSimulator {

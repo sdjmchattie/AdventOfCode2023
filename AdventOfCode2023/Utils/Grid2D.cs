@@ -1,11 +1,11 @@
 namespace AdventOfCode.Utils;
 
-readonly struct Offset(int x, int y) {
+readonly record struct Offset(int x, int y) {
     public readonly int X = x;
     public readonly int Y = y;
 }
 
-readonly struct Point(int x, int y) {
+readonly record struct Point(int x, int y) {
     public readonly int X = x;
     public readonly int Y = y;
 
@@ -130,7 +130,7 @@ class Grid2D : IEquatable<Grid2D>
         };
     }
 
-    private bool PointOutOfBounds(Point point) =>
+    protected bool PointOutOfBounds(Point point) =>
         point.X < 0 || point.X >= Width || point.Y < 0 || point.Y >= Height;
 
     public bool Equals(Grid2D? other)
