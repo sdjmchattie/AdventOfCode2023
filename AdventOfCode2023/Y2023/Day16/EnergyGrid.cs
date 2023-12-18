@@ -1,4 +1,4 @@
-using AdventOfCode.Utils;
+namespace AdventOfCode.Utils.Y2023.Day16;
 
 class EnergyGrid : Grid2D
 {

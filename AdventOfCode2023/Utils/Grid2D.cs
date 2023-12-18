@@ -72,20 +72,7 @@ class Grid2D : IEquatable<Grid2D>
         }
     }
 
-    public IEnumerable<char> Neighbours(Point point)
-    {
-        var minX = Math.Max(0, point.X - 1);
-        var maxX = Math.Min(Width - 1, point.X + 1);
-        var minY = Math.Max(0, point.Y - 1);
-        var maxY = Math.Min(Height - 1, point.Y + 1);
-
-        for (int curX = minX; curX <= maxX; curX++) {
-            for (int curY = minY; curY <= maxY; curY++) {
-                if (curX == point.X && curY == point.Y) { continue; }
-                yield return this[curX, curY];
-            }
-        }
-    }
+    public IEnumerable<char> Neighbours(Point point) => this[NeighbourPoints(point)];
 
     public char? Neighbour(Point point, CompassDirection direction)
     {
@@ -110,12 +97,27 @@ class Grid2D : IEquatable<Grid2D>
     public IEnumerable<Point> PointsAlong(int index, CompassDirection direction)
     {
         var maxIndex = direction == CompassDirection.North ||
-            direction == CompassDirection.South ? Height : Width;
+            direction == CompassDirection.South ? Width : Height;
         if (index < 0 || index >= maxIndex) {
             throw new ArgumentOutOfRangeException(nameof(index), "Index must be within the bounds of the grid.");
         }
 
         return PointsTowards(PointOutsideGrid(index, direction), direction);
+    }
+
+    protected IEnumerable<Point> NeighbourPoints(Point point)
+    {
+        var minX = Math.Max(0, point.X - 1);
+        var maxX = Math.Min(Width - 1, point.X + 1);
+        var minY = Math.Max(0, point.Y - 1);
+        var maxY = Math.Min(Height - 1, point.Y + 1);
+
+        for (int curX = minX; curX <= maxX; curX++) {
+            for (int curY = minY; curY <= maxY; curY++) {
+                if (curX == point.X && curY == point.Y) { continue; }
+                yield return new(curX, curY);
+            }
+        }
     }
 
     protected Point PointOutsideGrid(int index, CompassDirection direction)
@@ -146,5 +148,12 @@ class Grid2D : IEquatable<Grid2D>
         }
 
         return true;
+    }
+
+    public void OutputGrid()
+    {
+        for (int y = 0; y < Height; y++) {
+            Console.WriteLine(grid[y].ToArray());
+        }
     }
 }
