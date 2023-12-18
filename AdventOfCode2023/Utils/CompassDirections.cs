@@ -1,6 +1,6 @@
 namespace AdventOfCode.Utils;
 
-enum CompassDirection {
+public enum CompassDirection {
     North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest
 }
 

@@ -1,15 +1,13 @@
 namespace AdventOfCode.Utils.Y2023.Day18;
 
-public record struct DiggerInstruction(CompassDirection Direction, int Distance, string ColourHex);
-
-class Terrain
+class TerrainPart1
 {
     private (int minX, int maxX, int minY, int maxY)? gridDimensions;
-    private readonly IEnumerable<DiggerInstruction> Instructions;
+    private readonly IEnumerable<Instruction> Instructions;
     private readonly FloodFillGrid TerrainGrid;
     private readonly Point StartPoint;
 
-    public Terrain(IEnumerable<DiggerInstruction> instructions)
+    public TerrainPart1(IEnumerable<Instruction> instructions)
     {
         Instructions = instructions;
         var (minX, maxX, minY, maxY) = GetGridDimensions();
@@ -23,7 +21,6 @@ class Terrain
             if (!TerrainGrid.Find('#').Any()) {
                 Excavate();
                 TerrainGrid.FloodFill();
-                TerrainGrid.OutputGrid();
             }
 
             return TerrainGrid.Find('#').Count();
@@ -48,7 +45,7 @@ class Terrain
             var minY = 0;
             var maxY = 0;
 
-            foreach (DiggerInstruction instruction in Instructions) {
+            foreach (Instruction instruction in Instructions) {
                 var offset = instruction.Direction.GetOffset();
 
                 x += offset.X * instruction.Distance;
@@ -69,7 +66,7 @@ class Terrain
     private void Excavate()
     {
         var point = StartPoint;
-        foreach (DiggerInstruction instruction in Instructions) {
+        foreach (Instruction instruction in Instructions) {
             var offset = instruction.Direction.GetOffset();
             var points = new List<Point>();
             for (int i = 0; i < instruction.Distance; i++) {
