@@ -1,13 +1,13 @@
 namespace AdventOfCode.Utils.Y2023.Day18;
 
-class TerrainPart1
+class MemoryHungryTerrain
 {
     private (int minX, int maxX, int minY, int maxY)? gridDimensions;
     private readonly IEnumerable<Instruction> Instructions;
     private readonly FloodFillGrid TerrainGrid;
     private readonly Point StartPoint;
 
-    public TerrainPart1(IEnumerable<Instruction> instructions)
+    public MemoryHungryTerrain(IEnumerable<Instruction> instructions)
     {
         Instructions = instructions;
         var (minX, maxX, minY, maxY) = GetGridDimensions();
