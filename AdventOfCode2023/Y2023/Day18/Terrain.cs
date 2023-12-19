@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-
 namespace AdventOfCode.Utils.Y2023.Day18;
 
 class Terrain
