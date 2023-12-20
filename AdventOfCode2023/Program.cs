@@ -1,6 +1,6 @@
 ﻿using AdventOfCode.Y2023;
 
-var solution = new Day19();
+var solution = new Day20();
 
 Console.WriteLine("Part 1:  " + solution.Part1());
 Console.WriteLine("Part 2:  " + solution.Part2());
