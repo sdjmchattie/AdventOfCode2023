@@ -12,6 +12,7 @@ class Day17 {
 
     public object Part1()
     {
+        City.OutputPath();
         return City.ShortestRouteLength;
     }
 

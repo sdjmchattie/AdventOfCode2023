@@ -2,35 +2,70 @@ namespace AdventOfCode.Utils.Y2023.Day17;
 
 class City : DjikstraGrid
 {
+    protected class CityNodeState(
+        Point point, CompassDirection entryDirection, int straightCount
+    ) : NodeState(point)
+    {
+        public readonly CompassDirection EntryDirection = entryDirection;
+        public readonly int StraightCount = straightCount;
+
+        public bool Equals(CityNodeState? other) =>
+            base.Equals(other) &&
+            EntryDirection == other.EntryDirection &&
+            StraightCount == other.StraightCount;
+
+        public override bool Equals(object? obj) => Equals(obj as CityNodeState);
+
+        public override int GetHashCode() =>
+            HashCode.Combine(base.GetHashCode(), EntryDirection, StraightCount);
+    }
+
+    protected class CityNode(CityNodeState state) : Node(state) {
+        public new CityNodeState State => (CityNodeState)base.State;
+    }
+
     public City(string[] input) : base(input) {  }
     public City(Grid2D other) : base(other) {  }
 
-    override protected IEnumerable<PathPoint> NextPathPoints()
+    protected override CityNode InitialCurrentNode =>
+        new(new(new(InitialPoint.X, InitialPoint.Y), default, 0)) { Distance = 0 };
+
+    protected override IEnumerable<CityNode> NextNodes()
     {
-        foreach (PathPoint pathPoint in base.NextPathPoints()) {
-            var prevPath = CurrentPoint.previousPathPoint;
-            var prevPrevPath = prevPath?.previousPathPoint;
-            if (prevPath == null || prevPrevPath == null) {
-                yield return pathPoint;
+        var currentPoint = CurrentNode.State.Point;
+        foreach (Point point in AdjacentPoints()) {
+            if (PointOutOfBounds(point)) { continue; }
+            var direction = (point.X - currentPoint.X, point.Y - currentPoint.Y) switch {
+                (var dx, var _) when dx < 0 => CompassDirection.West,
+                (var dx, var _) when dx > 0 => CompassDirection.East,
+                (var _, var dy) when dy < 0 => CompassDirection.North,
+                (var _, var dy) when dy > 0 => CompassDirection.South,
+                (_, _) => default,
+            };
+
+            var currentState = ((CityNode)CurrentNode).State;
+            var sameDirection = currentState.EntryDirection == direction;
+            var reverseDirection = currentState.EntryDirection.Opposite() == direction;
+            var straightCount = sameDirection ? currentState.StraightCount + 1 : 1;
+            if (reverseDirection || (sameDirection && straightCount > 3)) {
                 continue;
             }
 
-            var xs = new HashSet<int> {
-                prevPrevPath.Point.X,
-                prevPath.Point.X,
-                CurrentPoint.Point.X,
-                pathPoint.Point.X,
-            };
+            var newState = new CityNodeState(point, direction, straightCount);
 
-            var ys = new HashSet<int> {
-                prevPrevPath.Point.Y,
-                prevPath.Point.Y,
-                CurrentPoint.Point.Y,
-                pathPoint.Point.Y,
-            };
+            if (!Visited.Any(pp => pp.State.Equals(newState))) {
+                var unvisited = Unvisited.Cast<CityNode>().FirstOrDefault(pp => pp.State.Equals(newState));
+                if (unvisited == null) {
+                    unvisited = new(newState);
+                    unvisited.History.AddRange(CurrentNode.History);
+                    Unvisited.Add(unvisited);
+                } else {
+                    unvisited.History.Remove(unvisited.History.Last());
+                }
 
-            if (xs.Count > 1 && ys.Count > 1) {
-                yield return pathPoint;
+                unvisited.History.Add(point);
+
+                yield return unvisited;
             }
         }
     }

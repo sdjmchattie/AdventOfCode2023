@@ -1,12 +1,36 @@
+using System.Data;
+
 namespace AdventOfCode.Utils;
 
 class DjikstraGrid : Grid2D
 {
-    protected class PathPoint(Point point)
+    protected class NodeState(Point point) : IEquatable<NodeState>
     {
         public readonly Point Point = point;
-        public PathPoint? previousPathPoint;
+
+        public bool Equals(NodeState? other)
+        {
+            if (other == null) { return false; }
+
+            return Point == other.Point;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as NodeState);
+
+        public override int GetHashCode() => Point.GetHashCode();
+    }
+
+    protected class Node(NodeState state) : IEquatable<Node>
+    {
         public int Distance = int.MaxValue;
+        public List<Point> History = [];
+        public readonly NodeState State = state;
+
+        public bool Equals(Node? other) => State.Equals(other?.State);
+
+        public override bool Equals(object? obj) => Equals(obj as Node);
+
+        public override int GetHashCode() => State.GetHashCode();
     }
 
     private Point initialPoint = new(0, 0);
@@ -31,9 +55,9 @@ class DjikstraGrid : Grid2D
         }
     }
 
-    protected PathPoint CurrentPoint = new(new(0, 0)) { Distance = 0 };
-    private readonly HashSet<PathPoint> Unvisited = [];
-    private readonly HashSet<PathPoint> Visited = [];
+    protected Node CurrentNode = new(new NodeState(new(0, 0))) { Distance = 0 };
+    protected readonly HashSet<Node> Unvisited = [];
+    protected readonly HashSet<Node> Visited = [];
 
     public DjikstraGrid(string[] input) : base(input) {
         DestinationPoint = new(Width - 1, Height - 1);
@@ -46,55 +70,75 @@ class DjikstraGrid : Grid2D
     public int ShortestRouteLength
     {
         get {
-            if (Visited.Count < 2) { ApplySearch(); }
-            return CurrentPoint.Distance;
+            if (Visited.Count == 0) { ApplySearch(); }
+            return CurrentNode.Distance;
         }
     }
+
+    public void OutputPath()
+    {
+        if (Visited.Count == 0) { ApplySearch(); }
+        for (int y = 0; y < Height; y++) {
+            for (int x = 0; x < Width; x++) {
+                Console.Write(CurrentNode.History.Contains(new(x, y)) ? '#' : '.');
+            }
+            Console.WriteLine();
+        }
+    }
+
+    protected virtual Node InitialCurrentNode =>
+        new(new(new(InitialPoint.X, InitialPoint.Y))) { Distance = 0 };
 
     private void Reset()
     {
-        CurrentPoint = new(new(InitialPoint.X, InitialPoint.Y)) { Distance = 0 };
+        CurrentNode = InitialCurrentNode;
         Visited.Clear();
         Unvisited.Clear();
-
-        for (int x = 0; x < Width; x++) {
-            for (int y = 0; y < Height; y++) {
-                Unvisited.Add(new(new(x, y)));
-            }
-        }
     }
 
-    private IEnumerable<Point> AdjacentPoints()
+    protected IEnumerable<Point> AdjacentPoints()
     {
-        yield return new Point(CurrentPoint.Point.X - 1, CurrentPoint.Point.Y);
-        yield return new Point(CurrentPoint.Point.X + 1, CurrentPoint.Point.Y);
-        yield return new Point(CurrentPoint.Point.X, CurrentPoint.Point.Y - 1);
-        yield return new Point(CurrentPoint.Point.X, CurrentPoint.Point.Y + 1);
+        yield return new Point(CurrentNode.State.Point.X - 1, CurrentNode.State.Point.Y);
+        yield return new Point(CurrentNode.State.Point.X + 1, CurrentNode.State.Point.Y);
+        yield return new Point(CurrentNode.State.Point.X, CurrentNode.State.Point.Y - 1);
+        yield return new Point(CurrentNode.State.Point.X, CurrentNode.State.Point.Y + 1);
     }
 
-    virtual protected IEnumerable<PathPoint> NextPathPoints()
+    virtual protected IEnumerable<Node> NextNodes()
     {
-        foreach (Point adjacentPoint in AdjacentPoints()) {
-            if (Unvisited.Any(pp => pp.Point == adjacentPoint)) {
-                yield return Unvisited.First(pp => pp.Point == adjacentPoint);
+        foreach (Point point in AdjacentPoints()) {
+            if (PointOutOfBounds(point)) { continue; }
+            if (!Visited.Any(pp => pp.State.Equals(new(point)))) {
+                var unvisited = Unvisited.FirstOrDefault(pp => pp.State.Equals(new(point)));
+                if (unvisited == null) {
+                    unvisited = new(new(point));
+                    unvisited.History.AddRange(CurrentNode.History);
+                    Unvisited.Add(unvisited);
+                } else {
+                    unvisited.History.Remove(unvisited.History.Last());
+                }
+
+                unvisited.History.Add(point);
+
+                yield return unvisited;
             }
         }
     }
 
     private void ApplySearch()
     {
-        while (CurrentPoint.Point != DestinationPoint) {
-            foreach (PathPoint pathPoint in NextPathPoints()) {
-                var newDistance = CurrentPoint.Distance + this[pathPoint.Point];
-                if (newDistance < pathPoint.Distance) {
-                    pathPoint.Distance = newDistance;
-                    pathPoint.previousPathPoint = CurrentPoint;
+        while (CurrentNode.State.Point != DestinationPoint) {
+            foreach (Node node in NextNodes()) {
+                var newDistance = CurrentNode.Distance +
+                    int.Parse(this[node.State.Point].ToString());
+                if (newDistance < node.Distance) {
+                    node.Distance = newDistance;
                 }
             }
 
-            Visited.Add(CurrentPoint);
-            Unvisited.Remove(CurrentPoint);
-            CurrentPoint = Unvisited.MinBy(pp => pp.Distance) ?? new(new(0, 0));
+            Visited.Add(CurrentNode);
+            Unvisited.Remove(CurrentNode);
+            CurrentNode = Unvisited.MinBy(pp => pp.Distance) ?? new(new(default));
         }
     }
 }
