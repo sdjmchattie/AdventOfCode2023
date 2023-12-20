@@ -70,7 +70,7 @@ class Day19 {
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        var solver = new CombinationSolver(Workflows);
+        return solver.CombinationsCount;
     }
 }
