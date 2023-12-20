@@ -1,6 +1,5 @@
 namespace AdventOfCode.Utils.Y2023.Day19;
 
-
 class CombinationSolver(ICollection<Workflow> workflows)
 {
     private readonly ICollection<Workflow> Workflows = workflows;
