@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Microsoft.VisualBasic;
 
 namespace AdventOfCode.Utils.Y2023.Day20;
 
@@ -10,6 +9,7 @@ public class MachineInitializer(HashSet<Module> modules)
     private ImmutableHashSet<Module> Modules = [.. modules];
     private readonly ButtonModule ButtonModule = new();
     private BroadcastModule BroadcastModule = (BroadcastModule)modules.First(m => m.Name == "broadcaster");
+    private Dictionary<string, Dictionary<Pulse, int>> PulseCounts = [];
 
     public void PushButton(int times = 1, bool verbose = false)
     {
@@ -28,6 +28,13 @@ public class MachineInitializer(HashSet<Module> modules)
                     HighPulseCount++;
                 }
 
+                var currentPulseCounts = PulseCounts.GetValueOrDefault(
+                    to.Name,
+                    new() {{Pulse.Low, 0}, {Pulse.High, 0}}
+                );
+                currentPulseCounts[pulse] += 1;
+                PulseCounts[to.Name] = currentPulseCounts;
+
                 var newPulses = to.Receive(pulse, from);
                 foreach ((Module newModule, Pulse newPulse) in newPulses) {
                     unresolvedPulses.Enqueue((to, newModule, newPulse));
@@ -36,5 +43,19 @@ public class MachineInitializer(HashSet<Module> modules)
 
             if (verbose) { Console.WriteLine(); }
         }
+    }
+
+    public int FindPulse(string moduleName, Pulse pulseType, bool verbose = false)
+    {
+        var buttonCount = 0;
+        while (PulseCounts.GetValueOrDefault(
+            moduleName,
+            new() {{Pulse.Low, 0}, {Pulse.High, 0}}
+        )[pulseType] == 0) {
+            PushButton(1, verbose);
+            buttonCount++;
+        }
+
+        return buttonCount;
     }
 }

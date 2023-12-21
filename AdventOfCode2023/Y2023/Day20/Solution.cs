@@ -68,7 +68,7 @@ class Day20 {
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        var machineInitializer = new MachineInitializer(Modules);
+        return machineInitializer.FindPulse("rx", Pulse.Low);
     }
 }
