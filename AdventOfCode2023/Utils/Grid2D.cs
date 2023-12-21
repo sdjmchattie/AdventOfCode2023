@@ -1,11 +1,11 @@
 namespace AdventOfCode.Utils;
 
-readonly record struct Offset(int x, int y) {
+public readonly record struct Offset(int x, int y) {
     public readonly int X = x;
     public readonly int Y = y;
 }
 
-readonly record struct Point(int x, int y) {
+public readonly record struct Point(int x, int y) {
     public readonly int X = x;
     public readonly int Y = y;
 
@@ -31,7 +31,7 @@ static class GridCompassExtensions {
     }
 }
 
-class Grid2D : IEquatable<Grid2D>
+public class Grid2D : IEquatable<Grid2D>
 {
     private readonly List<List<char>> grid;
 
