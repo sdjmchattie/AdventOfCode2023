@@ -1,5 +1,3 @@
-using System.Data;
-
 namespace AdventOfCode.Utils;
 
 class DjikstraGrid : Grid2D
