@@ -7,9 +7,9 @@ static class PipeExtensions {
 }
 
 class PipeMap : Grid2D {
-    private readonly Point startPoint;
+    private readonly Point2D startPoint;
     private readonly char startChar;
-    private IList<Point>? pipePoints;
+    private IList<Point2D>? pipePoints;
 
     public PipeMap(string[] input) : base(input)
     {
@@ -27,11 +27,11 @@ class PipeMap : Grid2D {
             .First();
     }
 
-    private IList<Point> PipePoints
+    private IList<Point2D> PipePoints
     {
         get {
             if (pipePoints == null) {
-                pipePoints = new List<Point> { startPoint };
+                pipePoints = new List<Point2D> { startPoint };
                 CompassDirection? possDirection = ConnectedDirections[startChar].First();
                 var nextDirection = possDirection ?? CompassDirection.North;
                 var nextPoint = startPoint.OffsetBy(nextDirection.GetOffset());
@@ -63,10 +63,10 @@ class PipeMap : Grid2D {
 
     public int InnerGroundCount {
         get {
-            var groundPoints = new List<Point>();
+            var groundPoints = new List<Point2D>();
             for (int x = 0; x < Width; x++) {
                 for (int y = 0; y < Height; y++) {
-                    var point = new Point(x, y);
+                    var point = new Point2D(x, y);
                     if (!PipePoints.Contains(point)) {
                         groundPoints.Add(point);
                     }

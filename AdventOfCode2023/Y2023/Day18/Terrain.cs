@@ -3,7 +3,7 @@ namespace AdventOfCode.Utils.Y2023.Day18;
 class Terrain
 {
     private readonly IEnumerable<Instruction> Instructions;
-    private readonly HashSet<Point> BorderPoints;
+    private readonly HashSet<Point2D> BorderPoints;
     private long ExcavationCount = 0L;
 
     public Terrain(IEnumerable<Instruction> instructions)
@@ -23,9 +23,9 @@ class Terrain
         }
     }
 
-    private HashSet<Point> ParseBorders()
+    private HashSet<Point2D> ParseBorders()
     {
-        var borders = new HashSet<Point>();
+        var borders = new HashSet<Point2D>();
         var x = 0;
         var y = 0;
 

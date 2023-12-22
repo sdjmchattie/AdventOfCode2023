@@ -14,7 +14,7 @@ class Day16 {
     public object Part1()
     {
         var simulator = BeamSimulator;
-        simulator.RunSimulation(new Point(-1, 0), CompassDirection.East);
+        simulator.RunSimulation(new Point2D(-1, 0), CompassDirection.East);
         return simulator.EnergizedCount;
     }
 
@@ -24,18 +24,18 @@ class Day16 {
         var simulator = BeamSimulator;
 
         for (int x = 0; x < simulator.Width; x++) {
-            simulator.RunSimulation(new Point(x, -1), CompassDirection.South);
+            simulator.RunSimulation(new Point2D(x, -1), CompassDirection.South);
             maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
 
-            simulator.RunSimulation(new Point(x, simulator.Height), CompassDirection.North);
+            simulator.RunSimulation(new Point2D(x, simulator.Height), CompassDirection.North);
             maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
         }
 
         for (int y = 0; y < simulator.Height; y++) {
-            simulator.RunSimulation(new Point(-1, y), CompassDirection.East);
+            simulator.RunSimulation(new Point2D(-1, y), CompassDirection.East);
             maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
 
-            simulator.RunSimulation(new Point(simulator.Width, y), CompassDirection.West);
+            simulator.RunSimulation(new Point2D(simulator.Width, y), CompassDirection.West);
             maxEnergize = Math.Max(maxEnergize, simulator.EnergizedCount);
         }
 

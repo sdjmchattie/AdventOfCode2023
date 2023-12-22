@@ -2,7 +2,7 @@ namespace AdventOfCode.Utils.Y2023.Day21;
 
 public class Garden : Grid2D
 {
-    private readonly HashSet<Point> ReachablePoints = [];
+    private readonly HashSet<Point2D> ReachablePoints = [];
 
     public Garden(string[] input) : base(input)
     {
@@ -16,23 +16,34 @@ public class Garden : Grid2D
         for (int i = 0; i < number; i++) {
             var current = ReachablePoints.Select(i => i).ToHashSet();
             ReachablePoints.Clear();
-            foreach (Point point in current) {
-                foreach (Point adjacent in AdjacentPoints(point)) {
+            foreach (Point2D point in current) {
+                foreach (Point2D adjacent in AdjacentPoints(point)) {
                     ReachablePoints.Add(adjacent);
                 }
             }
         }
     }
 
-    private IEnumerable<Point> AdjacentPoints(Point point)
+    private bool IsValid(Point2D point)
     {
-        var adjacent = new List<Point>() {
+        var normalisedX = point.X % Width;
+        var normalisedY = point.Y % Height;
+
+        if (normalisedX < 0) { normalisedX += Width; }
+        if (normalisedY < 0) { normalisedY += Height; }
+
+        return this[normalisedX, normalisedY] != '#';
+    }
+
+    private IEnumerable<Point2D> AdjacentPoints(Point2D point)
+    {
+        var adjacent = new List<Point2D>() {
             point.OffsetBy(CompassDirection.North.GetOffset()),
             point.OffsetBy(CompassDirection.East.GetOffset()),
             point.OffsetBy(CompassDirection.South.GetOffset()),
             point.OffsetBy(CompassDirection.West.GetOffset()),
         };
 
-        return adjacent.Where(point => !PointOutOfBounds(point) && this[point] != '#');
+        return adjacent.Where(IsValid);
     }
 }

@@ -5,7 +5,7 @@ class MemoryHungryTerrain
     private (int minX, int maxX, int minY, int maxY)? gridDimensions;
     private readonly IEnumerable<Instruction> Instructions;
     private readonly FloodFillGrid TerrainGrid;
-    private readonly Point StartPoint;
+    private readonly Point2D StartPoint;
 
     public MemoryHungryTerrain(IEnumerable<Instruction> instructions)
     {
@@ -68,7 +68,7 @@ class MemoryHungryTerrain
         var point = StartPoint;
         foreach (Instruction instruction in Instructions) {
             var offset = instruction.Direction.GetOffset();
-            var points = new List<Point>();
+            var points = new List<Point2D>();
             for (int i = 0; i < instruction.Distance; i++) {
                 point = point.OffsetBy(offset);
                 points.Add(point);

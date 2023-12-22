@@ -1,7 +1,7 @@
 namespace AdventOfCode.Utils.Y2023.Day16;
 
 class BeamSimulator {
-    private record struct Beam(Point Point, CompassDirection Direction);
+    private record struct Beam(Point2D Point, CompassDirection Direction);
 
     private readonly Grid2D Mirrors;
     private EnergyGrid Beams;
@@ -15,7 +15,7 @@ class BeamSimulator {
         Beams = NewBeams();
     }
 
-    public void RunSimulation(Point startingPoint, CompassDirection startingDirection)
+    public void RunSimulation(Point2D startingPoint, CompassDirection startingDirection)
     {
         Beams = NewBeams();
 

@@ -3,7 +3,7 @@ namespace AdventOfCode.Utils.Y2023.Day17;
 class City : DjikstraGrid
 {
     protected class CityNodeState(
-        Point point, CompassDirection entryDirection, int straightCount
+        Point2D point, CompassDirection entryDirection, int straightCount
     ) : NodeState(point)
     {
         public readonly CompassDirection EntryDirection = entryDirection;
@@ -33,7 +33,7 @@ class City : DjikstraGrid
     protected override IEnumerable<CityNode> NextNodes()
     {
         var currentPoint = CurrentNode.State.Point;
-        foreach (Point point in AdjacentPoints()) {
+        foreach (Point2D point in AdjacentPoints()) {
             if (PointOutOfBounds(point)) { continue; }
             var direction = (point.X - currentPoint.X, point.Y - currentPoint.Y) switch {
                 (var dx, var _) when dx < 0 => CompassDirection.West,

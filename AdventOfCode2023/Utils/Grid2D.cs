@@ -5,13 +5,6 @@ public readonly record struct Offset(int x, int y) {
     public readonly int Y = y;
 }
 
-public readonly record struct Point(int x, int y) {
-    public readonly int X = x;
-    public readonly int Y = y;
-
-    public Point OffsetBy(Offset offset) => new(offset.X + X, offset.Y + Y);
-}
-
 static class GridCompassExtensions {
     public static Offset GetOffset(this CompassDirection direction)
     {
@@ -54,33 +47,33 @@ public class Grid2D : IEquatable<Grid2D>
         protected set { grid[y][x] = value; }
     }
 
-    public char this[Point point]
+    public char this[Point2D point]
     {
         get { return this[point.X, point.Y]; }
         protected set { this[point.X, point.Y] = value; }
     }
 
-    public IEnumerable<char> this[IEnumerable<Point> points] =>
+    public IEnumerable<char> this[IEnumerable<Point2D> points] =>
         points.Select(point => this[point]);
 
-    public IEnumerable<Point> Find(char needle)
+    public IEnumerable<Point2D> Find(char needle)
     {
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
-                if (this[x, y] == needle) { yield return new Point(x, y); }
+                if (this[x, y] == needle) { yield return new Point2D(x, y); }
             }
         }
     }
 
-    public IEnumerable<char> Neighbours(Point point) => this[NeighbourPoints(point)];
+    public IEnumerable<char> Neighbours(Point2D point) => this[NeighbourPoints(point)];
 
-    public char? Neighbour(Point point, CompassDirection direction)
+    public char? Neighbour(Point2D point, CompassDirection direction)
     {
         var outPoint = point.OffsetBy(direction.GetOffset());
         return PointOutOfBounds(outPoint) ? null : this[outPoint];
     }
 
-    public IEnumerable<Point> PointsTowards(Point point, CompassDirection direction)
+    public IEnumerable<Point2D> PointsTowards(Point2D point, CompassDirection direction)
     {
         var newPoint = point;
         var offset = direction.GetOffset();
@@ -94,7 +87,7 @@ public class Grid2D : IEquatable<Grid2D>
         }
     }
 
-    public IEnumerable<Point> PointsAlong(int index, CompassDirection direction)
+    public IEnumerable<Point2D> PointsAlong(int index, CompassDirection direction)
     {
         var maxIndex = direction == CompassDirection.North ||
             direction == CompassDirection.South ? Width : Height;
@@ -105,7 +98,7 @@ public class Grid2D : IEquatable<Grid2D>
         return PointsTowards(PointOutsideGrid(index, direction), direction);
     }
 
-    protected IEnumerable<Point> NeighbourPoints(Point point)
+    protected IEnumerable<Point2D> NeighbourPoints(Point2D point)
     {
         var minX = Math.Max(0, point.X - 1);
         var maxX = Math.Min(Width - 1, point.X + 1);
@@ -120,19 +113,19 @@ public class Grid2D : IEquatable<Grid2D>
         }
     }
 
-    protected Point PointOutsideGrid(int index, CompassDirection direction)
+    protected Point2D PointOutsideGrid(int index, CompassDirection direction)
     {
         return direction switch
         {
-            CompassDirection.North => new Point(index, Height),
-            CompassDirection.South => new Point(index, -1),
-            CompassDirection.West => new Point(Width, index),
-            CompassDirection.East => new Point(-1, index),
+            CompassDirection.North => new Point2D(index, Height),
+            CompassDirection.South => new Point2D(index, -1),
+            CompassDirection.West => new Point2D(Width, index),
+            CompassDirection.East => new Point2D(-1, index),
             _ => default,
         };
     }
 
-    protected bool PointOutOfBounds(Point point) =>
+    protected bool PointOutOfBounds(Point2D point) =>
         point.X < 0 || point.X >= Width || point.Y < 0 || point.Y >= Height;
 
     public bool Equals(Grid2D? other)

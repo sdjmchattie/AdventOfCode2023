@@ -2,9 +2,9 @@ namespace AdventOfCode.Utils;
 
 class DjikstraGrid : Grid2D
 {
-    protected class NodeState(Point point) : IEquatable<NodeState>
+    protected class NodeState(Point2D point) : IEquatable<NodeState>
     {
-        public readonly Point Point = point;
+        public readonly Point2D Point = point;
 
         public bool Equals(NodeState? other)
         {
@@ -21,7 +21,7 @@ class DjikstraGrid : Grid2D
     protected class Node(NodeState state) : IEquatable<Node>
     {
         public int Distance = int.MaxValue;
-        public List<Point> History = [];
+        public List<Point2D> History = [];
         public readonly NodeState State = state;
 
         public bool Equals(Node? other) => State.Equals(other?.State);
@@ -31,8 +31,8 @@ class DjikstraGrid : Grid2D
         public override int GetHashCode() => State.GetHashCode();
     }
 
-    private Point initialPoint = new(0, 0);
-    public Point InitialPoint
+    private Point2D initialPoint = new(0, 0);
+    public Point2D InitialPoint
     {
         get { return initialPoint; }
         set {
@@ -42,8 +42,8 @@ class DjikstraGrid : Grid2D
         }
     }
 
-    private Point destinationPoint = new(0, 0);
-    public Point DestinationPoint
+    private Point2D destinationPoint = new(0, 0);
+    public Point2D DestinationPoint
     {
         get { return destinationPoint; }
         set {
@@ -94,17 +94,17 @@ class DjikstraGrid : Grid2D
         Unvisited.Clear();
     }
 
-    protected IEnumerable<Point> AdjacentPoints()
+    protected IEnumerable<Point2D> AdjacentPoints()
     {
-        yield return new Point(CurrentNode.State.Point.X - 1, CurrentNode.State.Point.Y);
-        yield return new Point(CurrentNode.State.Point.X + 1, CurrentNode.State.Point.Y);
-        yield return new Point(CurrentNode.State.Point.X, CurrentNode.State.Point.Y - 1);
-        yield return new Point(CurrentNode.State.Point.X, CurrentNode.State.Point.Y + 1);
+        yield return new Point2D(CurrentNode.State.Point.X - 1, CurrentNode.State.Point.Y);
+        yield return new Point2D(CurrentNode.State.Point.X + 1, CurrentNode.State.Point.Y);
+        yield return new Point2D(CurrentNode.State.Point.X, CurrentNode.State.Point.Y - 1);
+        yield return new Point2D(CurrentNode.State.Point.X, CurrentNode.State.Point.Y + 1);
     }
 
     virtual protected IEnumerable<Node> NextNodes()
     {
-        foreach (Point point in AdjacentPoints()) {
+        foreach (Point2D point in AdjacentPoints()) {
             if (PointOutOfBounds(point)) { continue; }
             if (!Visited.Any(pp => pp.State.Equals(new(point)))) {
                 var unvisited = Unvisited.FirstOrDefault(pp => pp.State.Equals(new(point)));

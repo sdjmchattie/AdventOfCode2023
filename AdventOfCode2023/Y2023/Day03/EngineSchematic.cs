@@ -50,7 +50,7 @@ class EngineSchematic(string[] input) : Grid2D(input) {
             return GetSchematicNumbers().Where(schematicNumber => {
                 var allNeighbours = new List<char>();
                 for (int x = schematicNumber.MinX; x <= schematicNumber.MaxX; x++) {
-                    allNeighbours.AddRange(Neighbours(new Point(x, schematicNumber.Y)));
+                    allNeighbours.AddRange(Neighbours(new Point2D(x, schematicNumber.Y)));
                 }
 
                 return allNeighbours.Any(neighbour => !IsDigit(neighbour) && neighbour != '.');

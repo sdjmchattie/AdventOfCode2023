@@ -5,9 +5,9 @@ class FloodFillGrid : Grid2D
     public FloodFillGrid(string[] input) : base(input) {  }
     public FloodFillGrid(Grid2D other) : base(other) {  }
 
-    public void Draw(IEnumerable<Point> points)
+    public void Draw(IEnumerable<Point2D> points)
     {
-        foreach (Point point in points) {
+        foreach (Point2D point in points) {
             this[point] = '#';
         }
     }
@@ -16,13 +16,13 @@ class FloodFillGrid : Grid2D
     {
         var lastRow = string.Concat(this[PointsAlong(Height - 1, CompassDirection.East)]);
         var x = lastRow.IndexOf('#');
-        var floodPoints = new HashSet<Point>() { new(x + 1, Height - 2) };
+        var floodPoints = new HashSet<Point2D>() { new(x + 1, Height - 2) };
         while (floodPoints.Count != 0) {
             var current = floodPoints.First();
             this[current] = '#';
             floodPoints.Remove(current);
 
-            foreach (Point p in NeighbourPoints(current).Where(n => this[n] == '.')) {
+            foreach (Point2D p in NeighbourPoints(current).Where(n => this[n] == '.')) {
                 floodPoints.Add(p);
             }
         }
