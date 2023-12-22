@@ -8,7 +8,7 @@ class Day03 {
             return parsedInput!;
         }
 
-        var inputFile = File.ReadAllLines("Y2023/Day03/input.txt");
+        var inputFile = File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
         parsedInput = new EngineSchematic(inputFile);
 
         return parsedInput;

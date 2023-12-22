@@ -10,7 +10,7 @@ class Day05 {
 
     private string[] FileContents()
     {
-        fileContents ??= File.ReadAllLines("Y2023/Day05/input.txt");
+        fileContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
         return fileContents;
     }

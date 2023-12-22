@@ -31,7 +31,6 @@ class Day14 {
                 if (platform.Equals(p)) {
                     var loopStart = platformList.FindIndex(p => p.Equals(platform));
                     var loopLength = platformList.Count - loopStart;
-                    Console.WriteLine(loopStart);
                     var neededPlatform = platformList[loopStart - 1 + (1000000000 - loopStart) % loopLength];
                     return neededPlatform.GetNorthLoad();
                 }

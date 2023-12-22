@@ -47,7 +47,7 @@ class Day04 {
             return parsedInput!;
         }
 
-        var inputLines = File.ReadAllLines("Y2023/Day04/input.txt");
+        var inputLines = File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
         parsedInput = inputLines.Select(ParseCard).ToList();
 
         return parsedInput;
