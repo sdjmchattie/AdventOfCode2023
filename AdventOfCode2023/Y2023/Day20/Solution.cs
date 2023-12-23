@@ -1,4 +1,5 @@
 using AdventOfCode.Utils.Y2023.Day20;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode.Y2023;
 
@@ -68,7 +69,13 @@ class Day20 {
 
     public object Part2()
     {
-        var machineInitializer = new MachineInitializer(Modules);
-        return machineInitializer.FindPulse("rx", Pulse.Low);
+        var repeats = 3;
+        var rxInput = (ConjunctionModule)Modules.Single(m => m.Outputs.Any(o => o.Name == "rx"));
+
+        return rxInput.Inputs.Keys.Aggregate(1L, (lcm, module) => {
+            var machineInitializer = new MachineInitializer(Modules);
+            var pulses = machineInitializer.FindPulses(module.Name, Pulse.Low, repeats);
+            return StolenMathsFunctions.LCM(lcm, pulses[repeats - 1]);
+        });
     }
 }

@@ -45,17 +45,19 @@ public class MachineInitializer(HashSet<Module> modules)
         }
     }
 
-    public int FindPulse(string moduleName, Pulse pulseType, bool verbose = false)
+    public List<int> FindPulses(string moduleName, Pulse pulseType, int repeats, bool verbose = false)
     {
-        var buttonCount = 0;
-        while (PulseCounts.GetValueOrDefault(
-            moduleName,
-            new() {{Pulse.Low, 0}, {Pulse.High, 0}}
-        )[pulseType] == 0) {
-            PushButton(1, verbose);
-            buttonCount++;
+        var buttonCounts = Enumerable.Repeat(0, repeats).ToList();
+        for (int i = 0; i < repeats; i++) {
+            while (PulseCounts.GetValueOrDefault(
+                moduleName,
+                new() {{Pulse.Low, 0}, {Pulse.High, 0}}
+            )[pulseType] == i) {
+                PushButton(1, verbose);
+                buttonCounts[i]++;
+            }
         }
 
-        return buttonCount;
+        return buttonCounts;
     }
 }
