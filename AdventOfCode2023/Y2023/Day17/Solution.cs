@@ -13,11 +13,14 @@ class Day17 {
 
     public object Part1()
     {
+        City.MaximumMovement = 3;
         return City.RouteLength;
     }
 
     public object Part2()
     {
-        return "Part 2 Solution";
+        City.MinimumMovement = 4;
+        City.MaximumMovement = 10;
+        return City.RouteLength;
     }
 }

@@ -23,6 +23,28 @@ public class City : Djikstra
     public City(Grid2D map) : base(map) {  }
     public City(City other) : base(other) {  }
 
+    private int minimumMovement = 0;
+    public int MinimumMovement
+    {
+        get { return minimumMovement; }
+        set {
+            if (minimumMovement == value) { return; }
+            minimumMovement = value;
+            Reset();
+        }
+    }
+
+    private int maximumMovement = int.MaxValue;
+    public int MaximumMovement
+    {
+        get { return maximumMovement; }
+        set {
+            if (maximumMovement == value) { return; }
+            maximumMovement = value;
+            Reset();
+        }
+    }
+
     protected override CityNode InitialCurrentNode =>
         new(0, new(InitialPoint.X, InitialPoint.Y), CompassDirection.SouthEast, 0);
 
@@ -38,14 +60,22 @@ public class City : Djikstra
             var newDistance = cityNode.Distance + int.Parse(Map[newPoint].ToString());
 
             if (newDirection == cityNode.EntryDirection) {
-                if (cityNode.StraightCount < 3) {
+                if (cityNode.StraightCount < MaximumMovement && (
+                    newPoint != DestinationPoint ||
+                    cityNode.StraightCount >= MinimumMovement
+                )) {
                     yield return new CityNode(
                         newDistance, newPoint, newDirection,
                         cityNode.StraightCount + 1
                     );
                 }
-            } else if (newDirection != cityNode.EntryDirection.Opposite()) {
-                yield return new CityNode(newDistance, newPoint, newDirection, 1);
+            } else if (newDirection != cityNode.EntryDirection.Opposite() &&
+                newPoint != DestinationPoint &&
+                (
+                    cityNode.StraightCount >= MinimumMovement ||
+                    cityNode.Equals(InitialCurrentNode)
+                )) {
+                    yield return new CityNode(newDistance, newPoint, newDirection, 1);
             }
         }
     }

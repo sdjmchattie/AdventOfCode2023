@@ -82,7 +82,7 @@ public class Djikstra
     protected virtual Node InitialCurrentNode =>
         new(0, new(InitialPoint.X, InitialPoint.Y));
 
-    private void Reset()
+    protected void Reset()
     {
         Visited.Clear();
         Unvisited.Clear();
