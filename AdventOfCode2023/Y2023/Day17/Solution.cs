@@ -1,4 +1,5 @@
 using AdventOfCode.Utils;
+using AdventOfCode.Utils.Y2023.Day17;
 
 namespace AdventOfCode.Y2023;
 
@@ -7,12 +8,11 @@ class Day17 {
     private string[] InputContents =>
         inputContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
-    private OwnCity? city;
-    private OwnCity City => city ??= new(new Grid2D(InputContents));
+    private City? city;
+    private City City => city ??= new(new Grid2D(InputContents));
 
     public object Part1()
     {
-        City.OutputPath();
         return City.RouteLength;
     }
 

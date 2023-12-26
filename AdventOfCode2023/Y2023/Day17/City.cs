@@ -3,8 +3,8 @@ namespace AdventOfCode.Utils.Y2023.Day17;
 public class City : Djikstra
 {
     protected class CityNode(
-        Point2D point, CompassDirection entryDirection, int straightCount
-    ) : Node(point)
+        int distance, Point2D point, CompassDirection entryDirection, int straightCount
+    ) : Node(distance, point)
     {
         public readonly CompassDirection EntryDirection = entryDirection;
         public readonly int StraightCount = straightCount;
@@ -24,34 +24,29 @@ public class City : Djikstra
     public City(City other) : base(other) {  }
 
     protected override CityNode InitialCurrentNode =>
-        new(new(InitialPoint.X, InitialPoint.Y), CompassDirection.SouthEast, 0);
+        new(0, new(InitialPoint.X, InitialPoint.Y), CompassDirection.SouthEast, 0);
 
-    protected override IEnumerable<CityNode> NextNodes()
+    protected override IEnumerable<CityNode> NextNodes(Node currentNode)
     {
-        var cityNode = (CityNode)CurrentNode;
+        var cityNode = (CityNode)currentNode;
 
-        foreach (Point2D point in AdjacentPoints()) {
-            if (Map.PointOutOfBounds(point)) { continue; }
+        foreach (CompassDirection newDirection in Directions) {
+            var newPoint = cityNode.Point.OffsetBy(newDirection.GetOffset());
 
-            var direction = (point.X - cityNode.Point.X, point.Y - cityNode.Point.Y) switch {
-                (var dx, var _) when dx < 0 => CompassDirection.West,
-                (var dx, var _) when dx > 0 => CompassDirection.East,
-                (var _, var dy) when dy < 0 => CompassDirection.North,
-                (var _, var dy) when dy > 0 => CompassDirection.South,
-                (_, _) => default,
-            };
+            if (Map.PointOutOfBounds(newPoint)) { continue; }
 
-            var sameDirection = cityNode.EntryDirection == direction;
-            var reverseDirection = cityNode.EntryDirection.Opposite() == direction;
-            var straightCount = sameDirection ? cityNode.StraightCount + 1 : 1;
-            if (reverseDirection || straightCount > 3) { continue; }
+            var newDistance = cityNode.Distance + int.Parse(Map[newPoint].ToString());
 
-            CityNode unvisited = new(point, direction, straightCount);
-            if (Visited.Contains(unvisited)) { continue; }
-
-            unvisited.History.AddRange(CurrentNode.History);
-            unvisited.History.Add(point);
-            yield return unvisited;
+            if (newDirection == cityNode.EntryDirection) {
+                if (cityNode.StraightCount < 3) {
+                    yield return new CityNode(
+                        newDistance, newPoint, newDirection,
+                        cityNode.StraightCount + 1
+                    );
+                }
+            } else if (newDirection != cityNode.EntryDirection.Opposite()) {
+                yield return new CityNode(newDistance, newPoint, newDirection, 1);
+            }
         }
     }
 }

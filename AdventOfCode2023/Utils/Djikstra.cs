@@ -2,11 +2,11 @@ namespace AdventOfCode.Utils;
 
 public class Djikstra
 {
-    protected class Node(Point2D point) : IEquatable<Node>
+    protected class Node(int distance, Point2D point) : IEquatable<Node>
     {
-        public readonly Point2D Point = point;
-
+        public int Distance = distance;
         public List<Point2D> History = [];
+        public readonly Point2D Point = point;
 
         public bool Equals(Node? other)
         {
@@ -43,10 +43,8 @@ public class Djikstra
     }
 
     protected Grid2D Map;
-    protected Node CurrentNode = new(new(0, 0));
     protected readonly PriorityQueue<Node, int> Unvisited = new();
     protected readonly HashSet<Node> Visited = [];
-    protected readonly Dictionary<Point2D, int> Distances = [];
 
     public Djikstra(Grid2D map) {
         Map = map;
@@ -62,9 +60,9 @@ public class Djikstra
     {
         get {
             if (Visited.Count == 0) { ApplySearch(); }
-            Console.WriteLine(Visited.Count);
-            Console.WriteLine(Visited.Count(v => v.Point == DestinationPoint));
-            return Distances[DestinationPoint];
+
+            var destinationNode = Visited.Single(v => v.Point == destinationPoint);
+            return destinationNode.Distance;
         }
     }
 
@@ -82,55 +80,47 @@ public class Djikstra
     }
 
     protected virtual Node InitialCurrentNode =>
-        new(new(InitialPoint.X, InitialPoint.Y));
+        new(0, new(InitialPoint.X, InitialPoint.Y));
 
     private void Reset()
     {
-        Distances.Clear();
         Visited.Clear();
         Unvisited.Clear();
-
         Unvisited.Enqueue(InitialCurrentNode, 0);
-        Distances[InitialPoint] = 0;
     }
 
-    protected IEnumerable<Point2D> AdjacentPoints()
+    protected List<CompassDirection> Directions = [
+        CompassDirection.North, CompassDirection.East,
+        CompassDirection.South, CompassDirection.West,
+    ];
+
+    protected virtual IEnumerable<Node> NextNodes(Node currentNode)
     {
-        yield return new Point2D(CurrentNode.Point.X - 1, CurrentNode.Point.Y);
-        yield return new Point2D(CurrentNode.Point.X + 1, CurrentNode.Point.Y);
-        yield return new Point2D(CurrentNode.Point.X, CurrentNode.Point.Y - 1);
-        yield return new Point2D(CurrentNode.Point.X, CurrentNode.Point.Y + 1);
-    }
+        foreach (CompassDirection newDirection in Directions) {
+            var newPoint = currentNode.Point.OffsetBy(newDirection.GetOffset());
 
-    protected virtual IEnumerable<Node> NextNodes()
-    {
-        foreach (Point2D point in AdjacentPoints()) {
-            if (Map.PointOutOfBounds(point)) { continue; }
+            if (Map.PointOutOfBounds(newPoint)) { continue; }
 
-            Node unvisited = new(point);
-            if (Visited.Contains(unvisited)) { continue; }
+            var newDistance = currentNode.Distance + int.Parse(Map[newPoint].ToString());
 
-            unvisited.History.AddRange(CurrentNode.History);
-            unvisited.History.Add(point);
-            yield return unvisited;
+            yield return new Node(newDistance, newPoint);
         }
     }
 
     private void ApplySearch()
     {
-        while (Unvisited.Count > 0) {
-            CurrentNode = Unvisited.Dequeue();
+        var currentNode = InitialCurrentNode;
+        while (currentNode.Point != DestinationPoint) {
+            currentNode = Unvisited.Dequeue();
+            if (Visited.Contains(currentNode)) { continue; }
 
-            foreach (Node node in NextNodes()) {
-                var newDistance = Distances[CurrentNode.Point] +
-                    int.Parse(Map[node.Point].ToString());
-                if (newDistance < Distances.GetValueOrDefault(node.Point, int.MaxValue)) {
-                    Distances[node.Point] = newDistance;
-                    Unvisited.Enqueue(node, Distances[node.Point]);
-                }
+            foreach (Node nextNode in NextNodes(currentNode)) {
+                nextNode.History.AddRange(currentNode.History);
+                nextNode.History.Add(nextNode.Point);
+                Unvisited.Enqueue(nextNode, nextNode.Distance);
             }
 
-            Visited.Add(CurrentNode);
+            Visited.Add(currentNode);
         }
     }
 }
