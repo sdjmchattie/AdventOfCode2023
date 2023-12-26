@@ -125,7 +125,7 @@ public class Grid2D : IEquatable<Grid2D>
         };
     }
 
-    protected bool PointOutOfBounds(Point2D point) =>
+    public bool PointOutOfBounds(Point2D point) =>
         point.X < 0 || point.X >= Width || point.Y < 0 || point.Y >= Height;
 
     public bool Equals(Grid2D? other)
