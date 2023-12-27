@@ -8,11 +8,21 @@ class Day23 {
         _inputContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
     private MazeDataSource? _dataSource;
-    private MazeDataSource DataSource => _dataSource ??= new(InputContents)
-        {
-            InitialPoint = new(1,0),
-            DestinationPoint = new(InputContents[0].Length - 2, InputContents.Length - 1)
-        };
+    private MazeDataSource DataSource
+    {
+        get {
+            if (_dataSource == null) {
+                _dataSource = new(InputContents)
+                {
+                    InitialPoint = new(1,0),
+                    DestinationPoint = new(InputContents[0].Length - 2, InputContents.Length - 1)
+                };
+                _dataSource.ParseMaze();
+            }
+
+            return _dataSource;
+        }
+    }
 
     private Maze Maze => new(DataSource);
 
