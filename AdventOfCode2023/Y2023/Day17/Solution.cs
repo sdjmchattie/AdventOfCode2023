@@ -8,19 +8,28 @@ class Day17 {
     private string[] InputContents =>
         inputContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
-    private City? city;
-    private City City => city ??= new(new DjikstraGridDataSource(InputContents));
+    private CityDataSource? _dataSource;
+    private CityDataSource DataSource => _dataSource ??= new(InputContents)
+    {
+        InitialPoint = new(0,0),
+        DestinationPoint = new(InputContents[0].Length - 1, InputContents.Length - 1)
+    };
+
+    private Djikstra? city;
+    private Djikstra City => city ??= new(DataSource);
 
     public object Part1()
     {
-        City.MaximumMovement = 3;
+        DataSource.MaximumMovement = 3;
+        City.Reset();
         return City.RouteLength;
     }
 
     public object Part2()
     {
-        City.MinimumMovement = 4;
-        City.MaximumMovement = 10;
+        DataSource.MinimumMovement = 4;
+        DataSource.MaximumMovement = 10;
+        City.Reset();
         return City.RouteLength;
     }
 }
