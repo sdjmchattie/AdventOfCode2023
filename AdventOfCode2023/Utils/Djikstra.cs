@@ -51,7 +51,7 @@ public class Djikstra
 
     protected IDjikstraDataSource DataSource;
     protected readonly PriorityQueue<Node, int> Unvisited = new();
-    protected readonly HashSet<Node> Visited = [];
+    protected readonly List<Node> Visited = [];
 
     public Djikstra(IDjikstraDataSource dataSource) {
         DataSource = dataSource;
@@ -63,21 +63,21 @@ public class Djikstra
         DestinationPoint = other.DestinationPoint;
     }
 
-    public int RouteLength
+    public virtual int RouteLength
     {
         get {
             if (Visited.Count == 0) { ApplySearch(); }
 
-            var destinationNode = Visited.Single(v => v.Point == destinationPoint);
+            var destinationNode = Visited.Single(v => v.Point == DestinationPoint);
             return destinationNode.Distance;
         }
     }
 
-    public void OutputPath()
+    public virtual void OutputPath()
     {
         if (Visited.Count == 0) { ApplySearch(); }
 
-        var destinationNode = Visited.Single(v => v.Point == destinationPoint);
+        var destinationNode = Visited.Single(v => v.Point == DestinationPoint);
         for (int y = 0; y < DataSource.Height(); y++) {
             for (int x = 0; x < DataSource.Width(); x++) {
                 Console.Write(destinationNode.History.Contains(new(x, y)) ? '#' : '.');
@@ -120,7 +120,7 @@ public class Djikstra
         }
     }
 
-    private void ApplySearch()
+    protected virtual void ApplySearch()
     {
         var currentNode = InitialCurrentNode;
         while (currentNode.Point != DestinationPoint) {
