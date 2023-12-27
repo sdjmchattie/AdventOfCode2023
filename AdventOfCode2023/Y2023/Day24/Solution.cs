@@ -1,3 +1,5 @@
+using AdventOfCode.Utils.Y2023.Day24;
+
 namespace AdventOfCode.Y2023;
 
 class Day24 {
@@ -5,10 +7,12 @@ class Day24 {
     private string[] InputContents =>
         _inputContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
+    private HailstoneSimulator? _simulator;
+    private HailstoneSimulator Simulator => _simulator ??= new(InputContents);
+
     public object Part1()
     {
-        var input = InputContents;
-        return "Part 1 Solution";
+        return Simulator.CollidingStonesCount;
     }
 
     public object Part2()
