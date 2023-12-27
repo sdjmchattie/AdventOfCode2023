@@ -1,5 +1,12 @@
 namespace AdventOfCode.Utils;
 
+public interface IDjikstraDataSource
+{
+    public int Width();
+    public int Height();
+    public int Distance(Point2D from, Point2D to);
+}
+
 public class Djikstra
 {
     protected class Node(int distance, Point2D point) : IEquatable<Node>
@@ -42,17 +49,17 @@ public class Djikstra
         }
     }
 
-    protected Grid2D Map;
+    protected IDjikstraDataSource DataSource;
     protected readonly PriorityQueue<Node, int> Unvisited = new();
     protected readonly HashSet<Node> Visited = [];
 
-    public Djikstra(Grid2D map) {
-        Map = map;
-        DestinationPoint = new(Map.Width - 1, Map.Height - 1);
+    public Djikstra(IDjikstraDataSource dataSource) {
+        DataSource = dataSource;
+        DestinationPoint = new(DataSource.Width() - 1, DataSource.Height() - 1);
     }
 
     public Djikstra(Djikstra other) {
-        Map = other.Map;
+        DataSource = other.DataSource;
         DestinationPoint = other.DestinationPoint;
     }
 
@@ -71,8 +78,8 @@ public class Djikstra
         if (Visited.Count == 0) { ApplySearch(); }
 
         var destinationNode = Visited.Single(v => v.Point == destinationPoint);
-        for (int y = 0; y < Map.Height; y++) {
-            for (int x = 0; x < Map.Width; x++) {
+        for (int y = 0; y < DataSource.Height(); y++) {
+            for (int x = 0; x < DataSource.Width(); x++) {
                 Console.Write(destinationNode.History.Contains(new(x, y)) ? '#' : '.');
             }
             Console.WriteLine();
@@ -94,14 +101,20 @@ public class Djikstra
         CompassDirection.South, CompassDirection.West,
     ];
 
+    protected bool OutOfBounds(Point2D point)
+    {
+        return point.X < 0 || point.X >= DataSource.Width() ||
+            point.Y < 0 || point.Y >= DataSource.Height();
+    }
+
     protected virtual IEnumerable<Node> NextNodes(Node currentNode)
     {
         foreach (CompassDirection newDirection in Directions) {
             var newPoint = currentNode.Point.OffsetBy(newDirection.GetOffset());
 
-            if (Map.PointOutOfBounds(newPoint)) { continue; }
+            if (OutOfBounds(newPoint)) { continue; }
 
-            var newDistance = currentNode.Distance + int.Parse(Map[newPoint].ToString());
+            var newDistance = currentNode.Distance + DataSource.Distance(currentNode.Point, newPoint);
 
             yield return new Node(newDistance, newPoint);
         }

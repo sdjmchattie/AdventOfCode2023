@@ -20,7 +20,7 @@ public class City : Djikstra
             HashCode.Combine(base.GetHashCode(), EntryDirection, StraightCount);
     }
 
-    public City(Grid2D map) : base(map) {  }
+    public City(IDjikstraDataSource dataSource) : base(dataSource) {  }
     public City(City other) : base(other) {  }
 
     private int minimumMovement = 0;
@@ -55,9 +55,9 @@ public class City : Djikstra
         foreach (CompassDirection newDirection in Directions) {
             var newPoint = cityNode.Point.OffsetBy(newDirection.GetOffset());
 
-            if (Map.PointOutOfBounds(newPoint)) { continue; }
+            if (OutOfBounds(newPoint)) { continue; }
 
-            var newDistance = cityNode.Distance + int.Parse(Map[newPoint].ToString());
+            var newDistance = cityNode.Distance + DataSource.Distance(currentNode.Point, newPoint);
 
             if (newDirection == cityNode.EntryDirection) {
                 if (cityNode.StraightCount < MaximumMovement && (

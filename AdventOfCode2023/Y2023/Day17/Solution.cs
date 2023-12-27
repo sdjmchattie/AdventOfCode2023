@@ -9,7 +9,7 @@ class Day17 {
         inputContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
     private City? city;
-    private City City => city ??= new(new Grid2D(InputContents));
+    private City City => city ??= new(new DjikstraGridDataSource(InputContents));
 
     public object Part1()
     {
