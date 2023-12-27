@@ -7,32 +7,23 @@ class Day23 {
     private string[] InputContents =>
         _inputContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
-    private Maze? maze;
-    private Maze Maze
-    {
-        get {
-            if (maze == null) {
-                var dataSource = new MazeDataSource(InputContents);
-                maze = new(dataSource)
-                {
-                    InitialPoint = new(1, 0),
-                    DestinationPoint = new(dataSource.Width - 2, dataSource.Height - 1)
-                };
-            }
+    private MazeDataSource? _dataSource;
+    private MazeDataSource DataSource => _dataSource ??= new(InputContents)
+        {
+            InitialPoint = new(1,0),
+            DestinationPoint = new(InputContents[0].Length - 2, InputContents.Length - 1)
+        };
 
-            return maze;
-        }
-    }
+    private Maze Maze => new(DataSource);
 
     public object Part1()
     {
-        Maze.OutputPath();
         return Maze.RouteLength;
     }
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        DataSource.CanClimbSlopes = true;
+        return Maze.RouteLength;
     }
 }

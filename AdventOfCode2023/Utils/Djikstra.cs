@@ -41,11 +41,17 @@ public abstract class DjikstraDataSource
     public abstract IEnumerable<Node> NextNodes(Node currentNode);
 }
 
-public class Djikstra(DjikstraDataSource dataSource)
+public class Djikstra
 {
-    protected DjikstraDataSource DataSource = dataSource;
+    protected DjikstraDataSource DataSource;
     protected readonly PriorityQueue<DjikstraDataSource.Node, int> Unvisited = new();
     protected readonly HashSet<DjikstraDataSource.Node> Visited = [];
+
+    public Djikstra(DjikstraDataSource dataSource)
+    {
+        DataSource = dataSource;
+        Reset();
+    }
 
     public virtual int RouteLength
     {

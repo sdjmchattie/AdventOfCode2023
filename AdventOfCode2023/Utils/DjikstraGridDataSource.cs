@@ -3,7 +3,7 @@ namespace AdventOfCode.Utils;
 
 public class DjikstraGridDataSource(string[] input) : DjikstraDataSource
 {
-    private readonly Grid2D Map = new(input);
+    protected readonly Grid2D Map = new(input);
 
     public override int Width() => Map.Width;
 
