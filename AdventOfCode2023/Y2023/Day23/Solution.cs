@@ -28,12 +28,12 @@ class Day23 {
 
     public object Part1()
     {
-        return Maze.RouteLength;
+        return Maze.OptimalRouteLength;
     }
 
     public object Part2()
     {
         DataSource.CanClimbSlopes = true;
-        return Maze.RouteLength;
+        return Maze.OptimalRouteLength;
     }
 }

@@ -1,7 +1,7 @@
 
 namespace AdventOfCode.Utils;
 
-public class DjikstraGridDataSource(string[] input) : DjikstraDataSource
+public class DjikstraGridDataSource(string[] input) : GridDjikstraDataSource
 {
     protected readonly Grid2D Map = new(input);
 

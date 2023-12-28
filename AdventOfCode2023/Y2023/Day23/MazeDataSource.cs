@@ -1,5 +1,3 @@
-using System.Drawing;
-
 namespace AdventOfCode.Utils.Y2023.Day23;
 
 public class MazeDataSource(string[] input) : DjikstraGridDataSource(input)

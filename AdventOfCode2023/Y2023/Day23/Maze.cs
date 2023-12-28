@@ -1,10 +1,10 @@
 namespace AdventOfCode.Utils.Y2023.Day23;
 
-public class Maze(MazeDataSource dataSource) : Djikstra(dataSource)
+public class Maze(MazeDataSource dataSource) : GridDjikstra(dataSource)
 {
-    protected new readonly List<DjikstraDataSource.Node> Visited = [];
+    protected new readonly List<GridDjikstraDataSource.Node> Visited = [];
 
-    public override int RouteLength
+    public override int OptimalRouteLength
     {
         get {
             if (Visited.Count == 0) { ApplySearch(); }
@@ -33,7 +33,7 @@ public class Maze(MazeDataSource dataSource) : Djikstra(dataSource)
         while (Unvisited.Count > 0) {
             var currentNode = Unvisited.Dequeue();
 
-            foreach (DjikstraDataSource.Node nextNode in DataSource.NextNodes(currentNode)) {
+            foreach (GridDjikstraDataSource.Node nextNode in DataSource.NextNodes(currentNode)) {
                 Unvisited.Enqueue(nextNode, nextNode.Distance);
             }
 

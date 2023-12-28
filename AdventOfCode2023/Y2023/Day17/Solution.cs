@@ -15,14 +15,14 @@ class Day17 {
         DestinationPoint = new(InputContents[0].Length - 1, InputContents.Length - 1)
     };
 
-    private Djikstra? city;
-    private Djikstra City => city ??= new(DataSource);
+    private GridDjikstra? city;
+    private GridDjikstra City => city ??= new(DataSource);
 
     public object Part1()
     {
         DataSource.MaximumMovement = 3;
         City.Reset();
-        return City.RouteLength;
+        return City.OptimalRouteLength;
     }
 
     public object Part2()
@@ -30,6 +30,6 @@ class Day17 {
         DataSource.MinimumMovement = 4;
         DataSource.MaximumMovement = 10;
         City.Reset();
-        return City.RouteLength;
+        return City.OptimalRouteLength;
     }
 }
