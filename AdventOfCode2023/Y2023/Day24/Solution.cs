@@ -7,12 +7,12 @@ class Day24 {
     private string[] InputContents =>
         _inputContents ??= File.ReadAllLines($"Y2023/{GetType().Name}/input.txt");
 
-    private HailstoneSimulator? _simulator;
-    private HailstoneSimulator Simulator => _simulator ??= new(InputContents);
+    private HailStoneResolver? _resolver;
+    private HailStoneResolver Resolver => _resolver ??= new(InputContents);
 
     public object Part1()
     {
-        return Simulator.CollidingStonesCount;
+        return Resolver.CollidingStonesCount;
     }
 
     public object Part2()
