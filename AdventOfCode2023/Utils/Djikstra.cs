@@ -2,41 +2,29 @@ namespace AdventOfCode.Utils;
 
 public abstract class DjikstraDataSource
 {
-    public class Node(int distance, Point2D point) : IEquatable<Node>
+    public class Node(int distance, string identifier) : IEquatable<Node>
     {
         public int Distance = distance;
-        public List<Point2D> History = [];
-        public readonly Point2D Point = point;
+        public List<string> History = [];
+        public readonly string Identifier = identifier;
 
         public bool Equals(Node? other)
         {
             if (other == null) { return false; }
 
-            return Point == other.Point;
+            return Identifier.Equals(other.Identifier);
         }
 
         public override bool Equals(object? obj) => Equals(obj as Node);
 
-        public override int GetHashCode() => Point.GetHashCode();
+        public override int GetHashCode() => Identifier.GetHashCode();
     }
 
-    public abstract int Width();
+    public string InitialIdentifier = "";
 
-    public abstract int Height();
+    public string DestinationIdentifier = "";
 
-    public Point2D InitialPoint = new(0, 0);
-
-    public Point2D DestinationPoint = new(0, 0);
-
-    public virtual Node InitialNode() => new(0, InitialPoint);
-
-    public virtual int Distance(Point2D from, Point2D to) =>
-        Math.Max(Math.Abs(to.X - from.X), Math.Abs(to.Y - from.Y));
-
-    protected List<CompassDirection> Directions = [
-        CompassDirection.North, CompassDirection.East,
-        CompassDirection.South, CompassDirection.West,
-    ];
+    public virtual Node InitialNode() => new(0, InitialIdentifier);
 
     public abstract IEnumerable<Node> NextNodes(Node currentNode);
 }
@@ -53,26 +41,25 @@ public class Djikstra
         Reset();
     }
 
-    public virtual int RouteLength
+    public virtual int OptimalRouteLength
     {
         get {
-            if (Visited.Count == 0) { ApplySearch(); }
+            if (Visited.Count == 0) { Reset(); ApplySearch(); }
 
-            var destinationNode = Visited.Single(v => v.Point == DataSource.DestinationPoint);
+            var destinationNode = Visited.Single(
+                v => v.Identifier == DataSource.DestinationIdentifier);
             return destinationNode.Distance;
         }
     }
 
-    public virtual void OutputPath()
+    public virtual IEnumerable<string> OptimalRouteHistory
     {
-        if (Visited.Count == 0) { ApplySearch(); }
+        get {
+            if (Visited.Count == 0) { Reset(); ApplySearch(); }
 
-        var destinationNode = Visited.Single(v => v.Point == DataSource.DestinationPoint);
-        for (int y = 0; y < DataSource.Height(); y++) {
-            for (int x = 0; x < DataSource.Width(); x++) {
-                Console.Write(destinationNode.History.Contains(new(x, y)) ? '#' : '.');
-            }
-            Console.WriteLine();
+            var destinationNode = Visited.Single(
+                v => v.Identifier == DataSource.DestinationIdentifier);
+            return destinationNode.History;
         }
     }
 
@@ -86,15 +73,14 @@ public class Djikstra
     protected virtual void ApplySearch()
     {
         var currentNode = DataSource.InitialNode();
-        while (currentNode.Point != DataSource.DestinationPoint) {
+        while (currentNode.Identifier != DataSource.DestinationIdentifier) {
             currentNode = Unvisited.Dequeue();
             if (Visited.Contains(currentNode)) { continue; }
+            Visited.Add(currentNode);
 
             foreach (DjikstraDataSource.Node nextNode in DataSource.NextNodes(currentNode)) {
                 Unvisited.Enqueue(nextNode, nextNode.Distance);
             }
-
-            Visited.Add(currentNode);
         }
     }
 }
