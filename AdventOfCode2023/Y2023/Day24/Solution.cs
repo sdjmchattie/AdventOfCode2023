@@ -17,7 +17,6 @@ class Day24 {
 
     public object Part2()
     {
-        var input = InputContents;
-        return "Part 2 Solution";
+        return "Use Python! C# on Apple Silicon is way too hard for solving algebra.";
     }
 }
